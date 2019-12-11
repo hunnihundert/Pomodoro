@@ -7,6 +7,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import com.hooni.pomodoro.util.NotificationUtil
 import com.hooni.pomodoro.util.PrefUtil
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
@@ -51,6 +55,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setSupportActionBar(toolBar)
         initUI()
     }
 
@@ -60,7 +65,7 @@ class MainActivity : AppCompatActivity() {
 
         removeAlarm(this)
 
-        //TODO: hide notifiction
+        NotificationUtil.hideTimerNotification(this)
     }
 
     override fun onPause() {
@@ -69,8 +74,9 @@ class MainActivity : AppCompatActivity() {
         if (timerState == TimerState.Running) {
             timer.cancel()
             val wakeUpTime = setAlarm(this, nowSeconds, secondsRemaining)
+            NotificationUtil.showTimerRunning(this, wakeUpTime )
         } else if (timerState == TimerState.Paused) {
-            // TODO show notfication
+            NotificationUtil.showTimerPaused(this)
         }
 
         PrefUtil.setPreviousTimerLengthSeconds(timerLengthSeconds, this)
@@ -110,7 +116,7 @@ class MainActivity : AppCompatActivity() {
         else
             setPreviousTimerLength()
 
-        secondsRemaining = if (timerState != TimerState.Stopped)
+        secondsRemaining = if (timerState == TimerState.Running || timerState == TimerState.Paused)
             PrefUtil.getSecondsRemaining(this)
         else
             timerLengthSeconds
@@ -202,4 +208,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu,menu)
+        Log.d("main","onCreateOptionsMenu")
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        Log.d("main","onOptionsItemSelected")
+        return when(item.itemId) {
+            R.id.menu_item_settings -> {
+                Log.d("main","onOptionsItemSelected // menu selected")
+                val intent = Intent(this,SettingsActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 }

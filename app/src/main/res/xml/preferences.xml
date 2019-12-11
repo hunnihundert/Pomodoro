@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SeekBarPreference
+        android:key="com.hooni.pomodoro.timer_length"
+        android:title="Timer Minutes"
+        android:summary="Select Pomodoro Time"
+        android:defaultValue="25"
+        app:min="1"
+        android:max="60"
+        app:showSeekBarValue="true">
+
+    </SeekBarPreference>
+
+    <SeekBarPreference
+        android:key="com.hooni.pomodoro.break_length"
+        android:title="Break Minutes"
+        android:summary="Select Break Time"
+        android:defaultValue="5"
+        app:min="1"
+        android:max="30"
+        app:showSeekBarValue="true">
+
+    </SeekBarPreference>
+
+
+
+
+    </PreferenceScreen>

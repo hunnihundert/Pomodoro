@@ -7,17 +7,20 @@ import com.hooni.pomodoro.MainActivity
 class PrefUtil {
 
     companion object {
+        private const val TIMER_LENGTH_ID = "com.hooni.pomodoro.timer_length"
+        private const val BREAK_LENGTH_ID = "com.hooni.pomodoro.break_length"
+
         fun getTimerLength(context: Context): Int {
-            // placeholder
-            return 25
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+            return preferences.getInt(TIMER_LENGTH_ID,25)
         }
 
         private const val PREVIOUS_TIMER_LENGTH_SECONDS_ID =
             "com.hooni.pomodoro.previous_timer_length"
 
         fun getPreviousTimerLengthSeconds(context: Context): Long {
-            val preferencess = PreferenceManager.getDefaultSharedPreferences(context)
-            return preferencess.getLong(PREVIOUS_TIMER_LENGTH_SECONDS_ID, 0)
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+            return preferences.getLong(PREVIOUS_TIMER_LENGTH_SECONDS_ID, 0)
         }
 
         fun setPreviousTimerLengthSeconds(seconds: Long, context: Context) {
