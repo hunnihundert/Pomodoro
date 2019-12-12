@@ -15,8 +15,12 @@ class PrefUtil {
             return preferences.getInt(TIMER_LENGTH_ID,25)
         }
 
-        private const val PREVIOUS_TIMER_LENGTH_SECONDS_ID =
-            "com.hooni.pomodoro.previous_timer_length"
+        fun getBreakLength(context: Context): Int {
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+            return preferences.getInt(BREAK_LENGTH_ID,25)
+        }
+
+        private const val PREVIOUS_TIMER_LENGTH_SECONDS_ID = "com.hooni.pomodoro.previous_timer_length"
 
         fun getPreviousTimerLengthSeconds(context: Context): Long {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)

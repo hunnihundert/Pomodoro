@@ -12,7 +12,6 @@ class TimerExpiredReceiver : BroadcastReceiver() {
         NotificationUtil.showTimerExpired(context)
 
         PrefUtil.setTimerState(MainActivity.TimerState.Stopped, context)
-        PrefUtil.setTimerState(MainActivity.TimerState.Stopped, context)
         PrefUtil.setAlarmSetTime(0,context)
     }
 }

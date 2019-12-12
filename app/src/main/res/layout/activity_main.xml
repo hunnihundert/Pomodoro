@@ -47,32 +47,33 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:clickable="false"
             android:theme="@style/CheckboxStyle" />
 
         <CheckBox
             android:id="@+id/pom2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:clickable="false"
+            />
 
         <CheckBox
             android:id="@+id/pom3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:clickable="false"
+            />
 
         <CheckBox
             android:id="@+id/pom4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <androidx.appcompat.widget.AppCompatRadioButton
-            android:id="@+id/breakPomodoro"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:theme="@style/CheckboxStyle"/>
+            android:clickable="false"
+            />
+
     </LinearLayout>
 
     <LinearLayout

@@ -42,6 +42,9 @@ class MainActivity : AppCompatActivity() {
         val nowSeconds: Long
             get() = Calendar.getInstance().timeInMillis / 1000
     }
+    var pomodoroCounter = 0
+    var nextPeriodBreak = false
+
 
     enum class TimerState {
         Stopped, Paused, Running
@@ -62,9 +65,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         initTimer()
-
         removeAlarm(this)
-
         NotificationUtil.hideTimerNotification(this)
     }
 
@@ -148,7 +149,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setNewTimerLength() {
-        val lengthInMinutes = PrefUtil.getTimerLength(this)
+
+        val lengthInMinutes = if(!nextPeriodBreak) PrefUtil.getTimerLength(this)
+        else PrefUtil.getBreakLength(this)
         timerLengthSeconds = (lengthInMinutes * 60L)
     }
 
@@ -164,7 +167,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun onTimerFinished() {
         timerState = TimerState.Stopped
-        uncheckBoxes()
+        updatePomodoroCounter()
         setNewTimerLength()
         PrefUtil.setSecondsRemaining(timerLengthSeconds, this)
         secondsRemaining = timerLengthSeconds
@@ -178,7 +181,6 @@ class MainActivity : AppCompatActivity() {
         pom2.isSelected = false
         pom3.isSelected = false
         pom4.isSelected = false
-        breakPomodoro.isSelected = false
     }
 
     private fun updateCountDownUI() {
@@ -204,6 +206,33 @@ class MainActivity : AppCompatActivity() {
             TimerState.Stopped -> {
                 startStop.setImageResource(android.R.drawable.ic_media_play)
                 restart.isEnabled = true
+            }
+        }
+    }
+
+    private fun updatePomodoroCounter() {
+        when(pomodoroCounter) {
+            0 -> {
+                pomodoroCounter++
+                pom1.isChecked = true
+            }
+            1 -> {
+                pomodoroCounter++
+                pom2.isChecked = true
+            }
+            2 -> {
+                pomodoroCounter++
+                pom3.isChecked = true
+            }
+            3 -> {
+                pomodoroCounter++
+                pom4.isChecked = true
+                nextPeriodBreak = true
+            }
+            else -> {
+                pomodoroCounter = 0
+                uncheckBoxes()
+                nextPeriodBreak = false
             }
         }
     }
