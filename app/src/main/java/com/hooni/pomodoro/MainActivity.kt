@@ -4,6 +4,8 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.media.MediaPlayer
+import android.media.RingtoneManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -111,12 +113,13 @@ class MainActivity : AppCompatActivity() {
                 // restart
                 updateButtons()
                 setTimer(timerLengthSeconds)
+                uncheckBoxes()
                 showStatusOnToast(it)
                 onTimerFinished()
             } else if (timerState == TimerState.PauseOnNext) {
                 // do not pause on next
                 timerState = TimerState.Running
-                showStatusOnToast()
+                showStatusOnToast(it)
                 updateButtons()
                 // toast should show that it won't stop on next end of the cycle
             }
@@ -218,6 +221,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun onTimerFinished() {
         //timerState = TimerState.Stopped
+        playNotification()
         if (secondsRemaining == 0L && !onShortBreak) updatePomodoroCounter()
         else if (onShortBreak) onShortBreak = false
         setNewTimerLength()
@@ -315,5 +319,11 @@ class MainActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun playNotification() {
+        val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val player = MediaPlayer.create(this,notification)
+        player.start()
     }
 }
