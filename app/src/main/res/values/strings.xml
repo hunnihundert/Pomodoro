@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Pomodoro</string>
+    <string name="timerDisplay">%d:%s</string>
+    <string name="pause_on_break_restart_description">Pause on Break, Restart</string>
+    <string name="pause_now_continue_description">Pause now, Continue</string>
+    <string name="on_break">ON BREAK</string>
 </resources>

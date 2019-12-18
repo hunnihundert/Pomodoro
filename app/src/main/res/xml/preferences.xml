@@ -10,20 +10,32 @@
         android:defaultValue="25"
         app:min="1"
         android:max="60"
-        app:showSeekBarValue="true">
-
-    </SeekBarPreference>
+        app:showSeekBarValue="true"/>
 
     <SeekBarPreference
-        android:key="com.hooni.pomodoro.break_length"
-        android:title="Break Minutes"
-        android:summary="Select Break Time"
+        android:key="com.hooni.pomodoro.short_break_length"
+        android:title="Short Break Minutes"
+        android:summary="Select Short Break Time"
         android:defaultValue="5"
         app:min="1"
         android:max="30"
-        app:showSeekBarValue="true">
+        app:showSeekBarValue="true"/>
 
-    </SeekBarPreference>
+    <SeekBarPreference
+        android:key="com.hooni.pomodoro.break_length"
+        android:title="Short Break Minutes"
+        android:summary="Select Short Break Time"
+        android:defaultValue="5"
+        app:min="1"
+        android:max="30"
+        app:showSeekBarValue="true"/>
+
+    <SwitchPreferenceCompat
+        android:key="com.hooni.pomodoro.autostart"
+        android:title="Start next cycle automatically"
+        android:summary="If turned on, the next cycle will start automatically"
+        android:defaultValue="true"
+        />
 
 
 

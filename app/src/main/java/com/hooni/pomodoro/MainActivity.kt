@@ -10,6 +10,10 @@ import android.os.CountDownTimer
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
+import android.widget.Toast
 import com.hooni.pomodoro.util.NotificationUtil
 import com.hooni.pomodoro.util.PrefUtil
 import kotlinx.android.synthetic.main.activity_main.*
@@ -26,34 +30,39 @@ class MainActivity : AppCompatActivity() {
             val wakeUpTime = (nowSeconds + secondsRemaining) * 1000
             val alarmManager = context.getSystemService((Context.ALARM_SERVICE)) as AlarmManager
             val intent = Intent(context, TimerExpiredReceiver::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(context,0,intent,0)
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP,wakeUpTime,pendingIntent)
+            val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, wakeUpTime, pendingIntent)
             PrefUtil.setAlarmSetTime(nowSeconds, context)
             return wakeUpTime
         }
 
         fun removeAlarm(context: Context) {
             val intent = Intent(context, TimerExpiredReceiver::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(context,0,intent,0)
+            val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
             val alarmManager = context.getSystemService((Context.ALARM_SERVICE)) as AlarmManager
             alarmManager.cancel(pendingIntent)
-            PrefUtil.setAlarmSetTime(0,context)
+            PrefUtil.setAlarmSetTime(0, context)
         }
+
         val nowSeconds: Long
             get() = Calendar.getInstance().timeInMillis / 1000
     }
-    var pomodoroCounter = 0
-    var nextPeriodBreak = false
-
 
     enum class TimerState {
-        Stopped, Paused, Running
+        Stopped, Paused, Running, PauseOnNext
     }
 
+    // the actual timer which is running
     private lateinit var timer: CountDownTimer
+
+
     private var timerLengthSeconds = 0L
     private var timerState = TimerState.Stopped
     private var secondsRemaining = 0L
+
+    // indication which pomodoro cycle is currently running
+    private var pomodoroCounter = 0
+    private var onShortBreak = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +84,7 @@ class MainActivity : AppCompatActivity() {
         if (timerState == TimerState.Running) {
             timer.cancel()
             val wakeUpTime = setAlarm(this, nowSeconds, secondsRemaining)
-            NotificationUtil.showTimerRunning(this, wakeUpTime )
+            NotificationUtil.showTimerRunning(this, wakeUpTime)
         } else if (timerState == TimerState.Paused) {
             NotificationUtil.showTimerPaused(this)
         }
@@ -93,23 +102,58 @@ class MainActivity : AppCompatActivity() {
 
     private fun initButtons() {
         restart.setOnClickListener {
-            setTimer(STANDARD_POMODORO_TIME)
-            onTimerFinished()
+            if (timerState == TimerState.Running) {
+                // pause on end of cycle
+                timerState = TimerState.PauseOnNext
+                updateButtons()
+                showStatusOnToast(it)
+            } else if (timerState == TimerState.Paused || timerState == TimerState.Stopped) {
+                // restart
+                updateButtons()
+                setTimer(timerLengthSeconds)
+                showStatusOnToast(it)
+                onTimerFinished()
+            } else if (timerState == TimerState.PauseOnNext) {
+                // do not pause on next
+                timerState = TimerState.Running
+                showStatusOnToast()
+                updateButtons()
+                // toast should show that it won't stop on next end of the cycle
+            }
+
         }
 
         startStop.setOnClickListener {
-            if (timerState == TimerState.Running) {
+            if (timerState == TimerState.Paused || timerState == TimerState.Stopped) {
+                startTimer()
+                updateButtons()
+                showStatusOnToast(it)
+            } else {
                 timer.cancel()
                 timerState = TimerState.Paused
                 updateButtons()
-            } else {
-                startTimer()
-                updateButtons()
+                showStatusOnToast(it)
             }
         }
     }
 
+    private fun showStatusOnToast(view: View) {
+        when (timerState) {
+            TimerState.Running -> {
+                if (view == restart) Toast.makeText(this, "Timer will continue after this cycle", Toast.LENGTH_SHORT).show()
+                else Toast.makeText(this, "Timer started", Toast.LENGTH_SHORT).show()
+                }
+            TimerState.Paused -> {
+                if (view == restart) Toast.makeText(this, "Timer Reset", Toast.LENGTH_SHORT).show()
+                else Toast.makeText(this, "Timer Paused", Toast.LENGTH_SHORT).show()
+            }
+            TimerState.PauseOnNext -> Toast.makeText(this,"Timer will pause after this cycle",Toast.LENGTH_SHORT).show()
+            TimerState.Stopped -> Toast.makeText(this, "Timer stopped", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun initTimer() {
+
         timerState = PrefUtil.getTimerState(this)
 
         if (timerState == TimerState.Stopped)
@@ -117,18 +161,19 @@ class MainActivity : AppCompatActivity() {
         else
             setPreviousTimerLength()
 
-        secondsRemaining = if (timerState == TimerState.Running || timerState == TimerState.Paused)
-            PrefUtil.getSecondsRemaining(this)
-        else
-            timerLengthSeconds
+        secondsRemaining =
+            if (timerState == TimerState.Running || timerState == TimerState.Paused || timerState == TimerState.PauseOnNext)
+                PrefUtil.getSecondsRemaining(this)
+            else
+                timerLengthSeconds
 
         val alarmSetTime = PrefUtil.getAlarmSetTime(this)
-        if(alarmSetTime > 0)
+        if (alarmSetTime > 0)
             secondsRemaining -= nowSeconds - alarmSetTime
 
         if (secondsRemaining <= 0)
             onTimerFinished()
-        else if (timerState == TimerState.Running)
+        else if (timerState == TimerState.Running || timerState == TimerState.PauseOnNext)
             startTimer()
 
         updateButtons()
@@ -136,7 +181,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startTimer() {
-        timerState = TimerState.Running
+        if (onShortBreak) {
+            on_break_text.visibility = VISIBLE
+        } else {
+            on_break_text.visibility = INVISIBLE
+        }
+        if (timerState == TimerState.Paused || timerState == TimerState.Stopped) timerState =
+            TimerState.Running
 
         timer = object : CountDownTimer(secondsRemaining * 1000, 1000) {
             override fun onFinish() = onTimerFinished()
@@ -149,9 +200,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setNewTimerLength() {
-
-        val lengthInMinutes = if(!nextPeriodBreak) PrefUtil.getTimerLength(this)
-        else PrefUtil.getBreakLength(this)
+        val lengthInMinutes = if (onShortBreak) PrefUtil.getShortBreakLength(this)
+        else if (!onShortBreak && pomodoroCounter == 4) PrefUtil.getLongBreakLength(this)
+        else PrefUtil.getTimerLength(this)
         timerLengthSeconds = (lengthInMinutes * 60L)
     }
 
@@ -166,30 +217,35 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onTimerFinished() {
-        timerState = TimerState.Stopped
-        updatePomodoroCounter()
+        //timerState = TimerState.Stopped
+        if (secondsRemaining == 0L && !onShortBreak) updatePomodoroCounter()
+        else if (onShortBreak) onShortBreak = false
         setNewTimerLength()
         PrefUtil.setSecondsRemaining(timerLengthSeconds, this)
         secondsRemaining = timerLengthSeconds
-
         updateButtons()
         updateCountDownUI()
+
+        if (PrefUtil.getAutoStart(this) && timerState == TimerState.Running) {
+            startTimer()
+        } else {
+            timerState = TimerState.Paused
+        }
     }
 
     private fun uncheckBoxes() {
-        pom1.isSelected = false
-        pom2.isSelected = false
-        pom3.isSelected = false
-        pom4.isSelected = false
+        pom1.isChecked = false
+        pom2.isChecked = false
+        pom3.isChecked = false
+        pom4.isChecked = false
     }
 
     private fun updateCountDownUI() {
         val minutesUntilFinished = secondsRemaining / 60
         val secondsInMinuteUntilFinished = secondsRemaining - minutesUntilFinished * 60
         val secondsStr = secondsInMinuteUntilFinished.toString()
-        timerDisplay.text = "$minutesUntilFinished:${
-        if (secondsStr.length == 2) secondsStr
-        else "0$secondsStr"}"
+        val twoDigitSeconds = if (secondsStr.length == 2) secondsStr else "0$secondsStr"
+        timerDisplay.text = getString(R.string.timerDisplay, minutesUntilFinished, twoDigitSeconds)
         // progress_countdown.progress =  (timerLengthSeconds - secondsRemaining).toInt()
     }
 
@@ -197,58 +253,63 @@ class MainActivity : AppCompatActivity() {
         when (timerState) {
             TimerState.Running -> {
                 startStop.setImageResource(android.R.drawable.ic_media_pause)
-                restart.isEnabled = false
+                restart.setImageResource(R.drawable.ic_break_on_pause)
             }
             TimerState.Paused -> {
                 startStop.setImageResource(android.R.drawable.ic_media_play)
-                restart.isEnabled = true
+                restart.setImageResource(R.drawable.ic_reset)
+            }
+            TimerState.PauseOnNext -> {
+                startStop.setImageResource(android.R.drawable.ic_media_pause)
+                restart.setImageResource(R.drawable.ic_continue)
             }
             TimerState.Stopped -> {
                 startStop.setImageResource(android.R.drawable.ic_media_play)
-                restart.isEnabled = true
+                restart.setImageResource(R.drawable.ic_reset)
             }
         }
     }
 
     private fun updatePomodoroCounter() {
-        when(pomodoroCounter) {
+        when (pomodoroCounter) {
             0 -> {
                 pomodoroCounter++
                 pom1.isChecked = true
+                onShortBreak = true
             }
             1 -> {
                 pomodoroCounter++
                 pom2.isChecked = true
+                onShortBreak = true
             }
             2 -> {
                 pomodoroCounter++
                 pom3.isChecked = true
+                onShortBreak = true
             }
             3 -> {
                 pomodoroCounter++
                 pom4.isChecked = true
-                nextPeriodBreak = true
             }
             else -> {
                 pomodoroCounter = 0
                 uncheckBoxes()
-                nextPeriodBreak = false
             }
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu,menu)
-        Log.d("main","onCreateOptionsMenu")
+        menuInflater.inflate(R.menu.menu, menu)
+        Log.d("main", "onCreateOptionsMenu")
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        Log.d("main","onOptionsItemSelected")
-        return when(item.itemId) {
+        Log.d("main", "onOptionsItemSelected")
+        return when (item.itemId) {
             R.id.menu_item_settings -> {
-                Log.d("main","onOptionsItemSelected // menu selected")
-                val intent = Intent(this,SettingsActivity::class.java)
+                Log.d("main", "onOptionsItemSelected // menu selected")
+                val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
                 true
             }

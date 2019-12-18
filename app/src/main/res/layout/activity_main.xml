@@ -56,6 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:clickable="false"
+            android:theme="@style/CheckboxStyle"
             />
 
         <CheckBox
@@ -64,6 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:clickable="false"
+            android:theme="@style/CheckboxStyle"
             />
 
         <CheckBox
@@ -72,6 +74,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:clickable="false"
+            android:theme="@style/CheckboxStyle"
             />
 
     </LinearLayout>
@@ -89,16 +92,29 @@
         <ImageButton
             android:id="@+id/restart"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:contentDescription="@string/pause_on_break_restart_description"
             app:srcCompat="@android:drawable/ic_menu_rotate" />
 
         <ImageButton
             android:id="@+id/startStop"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:contentDescription="@string/pause_now_continue_description"
             app:srcCompat="@android:drawable/ic_media_play" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/on_break_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/on_break"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timerDisplay" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
