@@ -23,11 +23,11 @@
 
     <SeekBarPreference
         android:key="com.hooni.pomodoro.break_length"
-        android:title="Short Break Minutes"
-        android:summary="Select Short Break Time"
-        android:defaultValue="5"
-        app:min="1"
-        android:max="30"
+        android:title="Long Break Minutes"
+        android:summary="Select Long Break Time"
+        android:defaultValue="20"
+        app:min="5"
+        android:max="60"
         app:showSeekBarValue="true"/>
 
     <SwitchPreferenceCompat

@@ -24,9 +24,7 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        val STANDARD_POMODORO_TIME: Long = 1500000 // 25 Minuts
-        val STANDARD_POMODORO_BREAK: Long = 300000 // 5 Minutes
-        val STANDARD_POMODORO_LONG_BREAK: Long = 1200000 // 20 Minutes
+        val STANDARD_POMODORO_TIME: Long = 1500000 // 25 Minutes
 
         fun setAlarm(context: Context, nowSeconds: Long, secondsRemaining: Long): Long {
             val wakeUpTime = (nowSeconds + secondsRemaining) * 1000
@@ -184,11 +182,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startTimer() {
-        if (onShortBreak) {
-            on_break_text.visibility = VISIBLE
-        } else {
-            on_break_text.visibility = INVISIBLE
+        when(on_break_text.text.toString()) {
+            "" -> on_break_text.text = getString(R.string.on_study)
+            getString(R.string.on_break) -> on_break_text.text = getString(R.string.on_study)
+            getString(R.string.on_study) -> on_break_text.text = getString(R.string.on_break)
         }
+
         if (timerState == TimerState.Paused || timerState == TimerState.Stopped) timerState =
             TimerState.Running
 
@@ -207,10 +206,12 @@ class MainActivity : AppCompatActivity() {
         else if (!onShortBreak && pomodoroCounter == 4) PrefUtil.getLongBreakLength(this)
         else PrefUtil.getTimerLength(this)
         timerLengthSeconds = (lengthInMinutes * 60L)
+        progress_countdown.max = timerLengthSeconds.toInt()
     }
 
     private fun setPreviousTimerLength() {
         timerLengthSeconds = PrefUtil.getPreviousTimerLengthSeconds(this)
+        progress_countdown.max = timerLengthSeconds.toInt()
     }
 
     private fun setTimer(time: Long) {
@@ -225,6 +226,7 @@ class MainActivity : AppCompatActivity() {
         if (secondsRemaining == 0L && !onShortBreak) updatePomodoroCounter()
         else if (onShortBreak) onShortBreak = false
         setNewTimerLength()
+        progress_countdown.progress = 0
         PrefUtil.setSecondsRemaining(timerLengthSeconds, this)
         secondsRemaining = timerLengthSeconds
         updateButtons()
@@ -250,7 +252,7 @@ class MainActivity : AppCompatActivity() {
         val secondsStr = secondsInMinuteUntilFinished.toString()
         val twoDigitSeconds = if (secondsStr.length == 2) secondsStr else "0$secondsStr"
         timerDisplay.text = getString(R.string.timerDisplay, minutesUntilFinished, twoDigitSeconds)
-        // progress_countdown.progress =  (timerLengthSeconds - secondsRemaining).toInt()
+        progress_countdown.progress =  (timerLengthSeconds - secondsRemaining).toInt()
     }
 
     private fun updateButtons() {

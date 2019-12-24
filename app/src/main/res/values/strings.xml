@@ -4,4 +4,6 @@
     <string name="pause_on_break_restart_description">Pause on Break, Restart</string>
     <string name="pause_now_continue_description">Pause now, Continue</string>
     <string name="on_break">ON BREAK</string>
+    <string name="settings">Settings</string>
+    <string name="on_study">STUDYING</string>
 </resources>
