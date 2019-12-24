@@ -217,7 +217,7 @@ class MainActivity : AppCompatActivity() {
     private fun setTimer(time: Long) {
         val lengthInMinutes = time / 60000L
         timerLengthSeconds = (lengthInMinutes * 60L)
-        // progress_countdown.max = timerLengthSeconds.toInt()
+        progress_countdown.max = timerLengthSeconds.toInt()
     }
 
     private fun onTimerFinished() {
