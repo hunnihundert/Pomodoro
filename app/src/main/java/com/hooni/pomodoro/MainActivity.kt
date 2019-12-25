@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
         if (timerState == TimerState.Running) {
             timer.cancel()
             val wakeUpTime = setAlarm(this, nowSeconds, secondsRemaining)
-            NotificationUtil.showTimerRunning(this, wakeUpTime)
+            NotificationUtil.showTimerRunning(this, wakeUpTime, secondsRemaining)
         } else if (timerState == TimerState.Paused) {
             NotificationUtil.showTimerPaused(this)
         }

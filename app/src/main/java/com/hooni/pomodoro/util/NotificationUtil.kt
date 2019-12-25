@@ -18,12 +18,19 @@ import com.hooni.pomodoro.MainActivity
 import com.hooni.pomodoro.R
 import com.hooni.pomodoro.TimerNotificationActionReceiver
 import java.util.*
+import kotlin.concurrent.schedule
+import kotlin.concurrent.scheduleAtFixedRate
 
 class NotificationUtil {
     companion object {
         private const val CHANNEL_ID_TIMER = "menu_timer"
         private const val CHANNEL_NAME_TIMER = "Timer App Timer"
         private const val TIMER_ID = 0
+
+        lateinit var nBuilder: NotificationCompat.Builder
+        lateinit var nManager: NotificationManager
+
+        var timerIsRunning = false
 
         fun showTimerExpired(context: Context) {
             val startIntent = Intent(context, TimerNotificationActionReceiver::class.java)
@@ -41,29 +48,42 @@ class NotificationUtil {
         }
 
         @TargetApi(24)
-        fun showTimerRunning(context: Context, wakeUpTime: Long) {
+        fun showTimerRunning(context: Context, wakeUpTime: Long, secondsRemaining: Long) {
+            // stop button in notibar
             val stopIntent = Intent(context, TimerNotificationActionReceiver::class.java)
             stopIntent.action = AppConstants.ACTION_STOP
             val stopPendingIntent = PendingIntent.getBroadcast(context,0,stopIntent,PendingIntent.FLAG_UPDATE_CURRENT)
 
+            // pause button in notibar
             val pauseIntent = Intent(context, TimerNotificationActionReceiver::class.java)
             pauseIntent.action = AppConstants.ACTION_PAUSE
             val pausePendingIntent = PendingIntent.getBroadcast(context,0,pauseIntent,PendingIntent.FLAG_UPDATE_CURRENT)
 
+            // date format fuer die anzeige zeit, wann der timer endet
             val df = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
 
-            val nBuilder = getBasicNotificationBuilder(context, CHANNEL_ID_TIMER, true)
+
+            nBuilder = getBasicNotificationBuilder(context, CHANNEL_ID_TIMER, true)
             nBuilder.setContentTitle("Timer Running!")
                 .setContentText("End: ${df.format(Date(wakeUpTime))}")
                 .setContentIntent(getPendingIntentWithStack(context,MainActivity::class.java))
                 .setOngoing(true)
                 .addAction(R.drawable.ic_stop,"Stop",stopPendingIntent)
                 .addAction(android.R.drawable.ic_media_pause,"Pause",pausePendingIntent)
-
-            val nManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            nManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             nManager.createNotificationChannel(CHANNEL_ID_TIMER, CHANNEL_NAME_TIMER,true)
             nManager.notify(TIMER_ID,nBuilder.build())
+//            updateTimerRunning(secondsRemaining)
         }
+
+//        fun updateTimerRunning(remainingTime: Long){
+//            val timer = Timer("schedule", true)
+//
+//            timer.scheduleAtFixedRate(1000, (remainingTime*1000)) {
+//                nBuilder.setContentText("End: $remainingTime")
+//                nManager.notify(TIMER_ID, nBuilder.build())
+//            }
+//        }
 
         fun showTimerPaused(context: Context) {
             val resumeIntent = Intent(context, TimerNotificationActionReceiver::class.java)
@@ -83,6 +103,7 @@ class NotificationUtil {
         fun hideTimerNotification(context: Context) {
             val nManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             nManager.cancel(TIMER_ID)
+            timerIsRunning = false
         }
 
         private fun getBasicNotificationBuilder(context: Context, channelId: String, playSound: Boolean): NotificationCompat.Builder {
