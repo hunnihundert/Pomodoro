@@ -10,7 +10,7 @@ class PrefUtil {
         private const val TIMER_LENGTH_ID = "com.hooni.pomodoro.timer_length"
         private const val SHORT_BREAK_LENGTH_ID = "com.hooni.pomodoro.short_break_length"
         private const val LONG_BREAK_LENGTH_ID = "com.hooni.pomodoro.long_break_length"
-        private const val AUTO_START_ID = "com.hooni.pomodoro.autostart"
+        private const val AUTO_START_ID = "com.hooni.pomodoro.auto_start"
 
         fun getTimerLength(context: Context): Int {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -63,8 +63,8 @@ class PrefUtil {
         private const val SECONDS_REMAINING = "com.hooni.pomodoro.seconds_remaining"
 
         fun getSecondsRemaining(context: Context): Long {
-            val preferencess = PreferenceManager.getDefaultSharedPreferences(context)
-            return preferencess.getLong(SECONDS_REMAINING, 0)
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+            return preferences.getLong(SECONDS_REMAINING, 0)
         }
 
         fun setSecondsRemaining(seconds: Long, context: Context) {
@@ -76,7 +76,7 @@ class PrefUtil {
         private const val ALARM_SET_TIME_ID = "com.hooni.pomodoro.backgrounded_time"
 
         fun getAlarmSetTime(context: Context): Long {
-            val preferences = PreferenceManager.getDefaultSharedPreferences((context))
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
             return preferences.getLong(ALARM_SET_TIME_ID,0)
         }
 
@@ -84,6 +84,19 @@ class PrefUtil {
             val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
             editor.putLong(ALARM_SET_TIME_ID,time)
             editor.apply()
+        }
+
+        private const val CURRENT_CYCLE = "com.hooni.pomodoro.current_cycle"
+
+        fun setCurrentCycle(context: Context, currentCycle: Int) {
+            val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+            editor.putInt(CURRENT_CYCLE,currentCycle)
+            editor.apply()
+        }
+
+        fun getCurrentCycle(context: Context): Int {
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+            return preferences.getInt(CURRENT_CYCLE,0)
         }
 
     }

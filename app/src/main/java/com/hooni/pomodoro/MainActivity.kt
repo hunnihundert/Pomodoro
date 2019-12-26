@@ -24,12 +24,14 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        val STANDARD_POMODORO_TIME: Long = 1500000 // 25 Minutes
+        const val STANDARD_POMODORO_TIME: Long = 1500000 // 25 Minutes
 
         fun setAlarm(context: Context, nowSeconds: Long, secondsRemaining: Long): Long {
             val wakeUpTime = (nowSeconds + secondsRemaining) * 1000
             val alarmManager = context.getSystemService((Context.ALARM_SERVICE)) as AlarmManager
             val intent = Intent(context, TimerExpiredReceiver::class.java)
+            // passing additional information which cycle is next
+            // intent.putExtra(CURRENT_CYCLE,)
             val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, wakeUpTime, pendingIntent)
             PrefUtil.setAlarmSetTime(nowSeconds, context)
@@ -59,10 +61,6 @@ class MainActivity : AppCompatActivity() {
     private var timerLengthSeconds = 0L
     private var timerState = TimerState.Stopped
     private var secondsRemaining = 0L
-
-    // indication which pomodoro cycle is currently running
-    private var pomodoroCounter = 0
-    private var onShortBreak = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -155,14 +153,17 @@ class MainActivity : AppCompatActivity() {
     private fun initTimer() {
 
         timerState = PrefUtil.getTimerState(this)
-
-        if (timerState == TimerState.Stopped) {
-            on_break_text.text = getString(R.string.press_play)
-            setNewTimerLength()
+        when(timerState) {
+            TimerState.Stopped -> {
+                on_break_text.text = getString(R.string.press_play)
+                setNewTimerLength()
+            }
+            TimerState.Paused -> {
+                on_break_text.text = getString(R.string.on_break)
+                setPreviousTimerLength()
+            }
+            else -> setPreviousTimerLength()
         }
-        else
-            setPreviousTimerLength()
-
         secondsRemaining =
             if (timerState == TimerState.Running || timerState == TimerState.Paused || timerState == TimerState.PauseOnNext)
                 PrefUtil.getSecondsRemaining(this)
@@ -183,11 +184,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startTimer() {
-        when(onShortBreak) {
-            true -> on_break_text.text = getString(R.string.on_break)
-            false -> {
-                if(pomodoroCounter <= 3) on_break_text.text = getString(R.string.on_study)
-                else on_break_text.text = getString(R.string.on_long_break)
+        when(PrefUtil.getCurrentCycle(this)) {
+            0,2,4,6 -> {
+                // study cycle
+                on_break_text.text = getString(R.string.on_study)
+            }
+            1,3,5 -> {
+                // short break
+                on_break_text.text = getString(R.string.on_break)
+            }
+            7 -> {
+                // long break
+                on_break_text.text = getString(R.string.on_long_break)
+            }
+            else -> {
+                // error
             }
         }
 
@@ -205,9 +216,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setNewTimerLength() {
-        val lengthInMinutes = if (onShortBreak) PrefUtil.getShortBreakLength(this)
-        else if (!onShortBreak && pomodoroCounter == 4) PrefUtil.getLongBreakLength(this)
-        else PrefUtil.getTimerLength(this)
+        val lengthInMinutes =
+            when(PrefUtil.getCurrentCycle(this)) {
+                0,2,4,6 -> {
+                    // study cycle
+                    PrefUtil.getTimerLength(this)
+                }
+                1,3,5 -> {
+                    // short break
+                    PrefUtil.getShortBreakLength(this)
+                }
+                7 -> {
+                    // long break
+                    PrefUtil.getLongBreakLength(this)
+                }
+                else -> {
+                    // error
+                    PrefUtil.getTimerLength(this)
+                }
+            }
         timerLengthSeconds = (lengthInMinutes * 60L)
         progress_countdown.max = timerLengthSeconds.toInt()
     }
@@ -224,10 +251,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onTimerFinished() {
-        //timerState = TimerState.Stopped
         playNotification()
-        if (secondsRemaining == 0L && !onShortBreak) updatePomodoroCounter()
-        else if (onShortBreak) onShortBreak = false
+        updatePomodoroCounter()
         setNewTimerLength()
         progress_countdown.progress = 0
         PrefUtil.setSecondsRemaining(timerLengthSeconds, this)
@@ -281,31 +306,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updatePomodoroCounter() {
-        when (pomodoroCounter) {
-            0 -> {
-                pomodoroCounter++
-                pom1.isChecked = true
-                onShortBreak = true
-            }
-            1 -> {
-                pomodoroCounter++
-                pom2.isChecked = true
-                onShortBreak = true
-            }
-            2 -> {
-                pomodoroCounter++
-                pom3.isChecked = true
-                onShortBreak = true
-            }
-            3 -> {
-                pomodoroCounter++
-                pom4.isChecked = true
-            }
-            else -> {
-                pomodoroCounter = 0
-                uncheckBoxes()
-            }
-        }
+        PrefUtil.setCurrentCycle(this,(PrefUtil.getCurrentCycle(this)+1))
+
+//        when (pomodoroCounter) {
+//            0 -> {
+//                pomodoroCounter++
+//                pom1.isChecked = true
+//                onShortBreak = true
+//            }
+//            1 -> {
+//                pomodoroCounter++
+//                pom2.isChecked = true
+//                onShortBreak = true
+//            }
+//            2 -> {
+//                pomodoroCounter++
+//                pom3.isChecked = true
+//                onShortBreak = true
+//            }
+//            3 -> {
+//                pomodoroCounter++
+//                pom4.isChecked = true
+//            }
+//            else -> {
+//                pomodoroCounter = 0
+//                uncheckBoxes()
+//            }
+//        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
