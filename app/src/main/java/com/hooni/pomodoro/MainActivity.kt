@@ -110,7 +110,10 @@ class MainActivity : AppCompatActivity() {
                 setTimer(timerLengthSeconds)
                 uncheckBoxes()
                 showStatusOnToast(it)
+                // TODO: currently a workaround, the timer should be completely initialized and not
+                // onTimerFinished called
                 onTimerFinished()
+                PrefUtil.setCurrentCycle(this,0)
             } else if (timerState == TimerState.PauseOnNext) {
                 // do not pause on next
                 timerState = TimerState.Running
@@ -165,7 +168,7 @@ class MainActivity : AppCompatActivity() {
             else -> setPreviousTimerLength()
         }
         secondsRemaining =
-            if (timerState == TimerState.Running || timerState == TimerState.Paused || timerState == TimerState.PauseOnNext)
+            if (timerState != TimerState.Stopped)
                 PrefUtil.getSecondsRemaining(this)
             else
                 timerLengthSeconds
@@ -308,31 +311,6 @@ class MainActivity : AppCompatActivity() {
     private fun updatePomodoroCounter() {
         PrefUtil.setCurrentCycle(this,(PrefUtil.getCurrentCycle(this)+1))
 
-//        when (pomodoroCounter) {
-//            0 -> {
-//                pomodoroCounter++
-//                pom1.isChecked = true
-//                onShortBreak = true
-//            }
-//            1 -> {
-//                pomodoroCounter++
-//                pom2.isChecked = true
-//                onShortBreak = true
-//            }
-//            2 -> {
-//                pomodoroCounter++
-//                pom3.isChecked = true
-//                onShortBreak = true
-//            }
-//            3 -> {
-//                pomodoroCounter++
-//                pom4.isChecked = true
-//            }
-//            else -> {
-//                pomodoroCounter = 0
-//                uncheckBoxes()
-//            }
-//        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
