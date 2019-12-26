@@ -32,6 +32,17 @@ class NotificationUtil {
 
         var timerIsRunning = false
 
+//        enum class CurrentCycleName(val cycle: String) {
+//            firstCycle("1st Study"),
+//            firstBreak("1st Break"),
+//            secondCycle("2nd Study"),
+//            secondBreak("2nd Break"),
+//            thirdCycle("3rd Study"),
+//            thirdBreak("3rd Break"),
+//            fourthCycle("Last Study"),
+//            LongBreak("Long Break")
+//        }
+
         fun showTimerExpired(context: Context) {
             val startIntent = Intent(context, TimerNotificationActionReceiver::class.java)
             startIntent.action = AppConstants.ACTION_START
@@ -64,7 +75,8 @@ class NotificationUtil {
 
 
             nBuilder = getBasicNotificationBuilder(context, CHANNEL_ID_TIMER, true)
-            nBuilder.setContentTitle("Timer Running!")
+            // TODO: content title should show what cycle it is (number needs to get replaced)
+            nBuilder.setContentTitle("Timer Running! ${PrefUtil.getCurrentCycle(context)}")
                 .setContentText("End: ${df.format(Date(wakeUpTime))}")
                 .setContentIntent(getPendingIntentWithStack(context,MainActivity::class.java))
                 .setOngoing(true)

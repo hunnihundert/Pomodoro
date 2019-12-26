@@ -96,7 +96,7 @@ class PrefUtil {
 
         fun getCurrentCycle(context: Context): Int {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-            if(preferences.getInt(CURRENT_CYCLE,0) >= 7) return 0
+            return if(preferences.getInt(CURRENT_CYCLE,0) >= 7) 0
             else preferences.getInt(CURRENT_CYCLE,0)
         }
 
