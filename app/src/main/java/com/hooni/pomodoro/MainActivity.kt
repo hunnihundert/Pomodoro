@@ -80,8 +80,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-
-        if (timerState == TimerState.Running) {
+        if (timerState == TimerState.PauseOnNext || timerState == TimerState.Running) {
             timer.cancel()
             val wakeUpTime = setAlarm(this, nowSeconds, secondsRemaining)
             NotificationUtil.showTimerRunning(this, wakeUpTime, secondsRemaining)
@@ -157,8 +156,10 @@ class MainActivity : AppCompatActivity() {
 
         timerState = PrefUtil.getTimerState(this)
 
-        if (timerState == TimerState.Stopped)
+        if (timerState == TimerState.Stopped) {
+            on_break_text.text = getString(R.string.press_play)
             setNewTimerLength()
+        }
         else
             setPreviousTimerLength()
 
@@ -182,10 +183,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startTimer() {
-        when(on_break_text.text.toString()) {
-            "" -> on_break_text.text = getString(R.string.on_study)
-            getString(R.string.on_break) -> on_break_text.text = getString(R.string.on_study)
-            getString(R.string.on_study) -> on_break_text.text = getString(R.string.on_break)
+        when(onShortBreak) {
+            true -> on_break_text.text = getString(R.string.on_break)
+            false -> {
+                if(pomodoroCounter <= 3) on_break_text.text = getString(R.string.on_study)
+                else on_break_text.text = getString(R.string.on_long_break)
+            }
         }
 
         if (timerState == TimerState.Paused || timerState == TimerState.Stopped) timerState =
@@ -235,6 +238,7 @@ class MainActivity : AppCompatActivity() {
         if (PrefUtil.getAutoStart(this) && timerState == TimerState.Running) {
             startTimer()
         } else {
+            on_break_text.text = getString(R.string.press_play)
             timerState = TimerState.Paused
         }
     }
