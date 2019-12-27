@@ -30,8 +30,6 @@ class MainActivity : AppCompatActivity() {
             val wakeUpTime = (nowSeconds + secondsRemaining) * 1000
             val alarmManager = context.getSystemService((Context.ALARM_SERVICE)) as AlarmManager
             val intent = Intent(context, TimerExpiredReceiver::class.java)
-            // passing additional information which cycle is next
-            // intent.putExtra(CURRENT_CYCLE,)
             val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, wakeUpTime, pendingIntent)
             PrefUtil.setAlarmSetTime(nowSeconds, context)

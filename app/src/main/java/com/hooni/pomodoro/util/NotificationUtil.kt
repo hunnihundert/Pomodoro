@@ -47,7 +47,7 @@ class NotificationUtil {
             val startIntent = Intent(context, TimerNotificationActionReceiver::class.java)
             startIntent.action = AppConstants.ACTION_START
             val startPendingIntent = PendingIntent.getBroadcast(context,0,startIntent,PendingIntent.FLAG_UPDATE_CURRENT)
-            val nBuilder = getBasicNotificationBuilder(context, CHANNEL_ID_TIMER, true)
+            val nBuilder = getBasicNotificationBuilder(context, CHANNEL_ID_TIMER, false)
             nBuilder.setContentTitle("Timer Expired!")
                 .setContentText("Start Again?")
                 .setContentIntent(getPendingIntentWithStack(context,MainActivity::class.java))
@@ -74,7 +74,7 @@ class NotificationUtil {
             val df = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
 
 
-            nBuilder = getBasicNotificationBuilder(context, CHANNEL_ID_TIMER, true)
+            nBuilder = getBasicNotificationBuilder(context, CHANNEL_ID_TIMER, false)
             // TODO: content title should show what cycle it is (number needs to get replaced)
             nBuilder.setContentTitle("Timer Running! ${PrefUtil.getCurrentCycle(context)}")
                 .setContentText("End: ${df.format(Date(wakeUpTime))}")
@@ -83,7 +83,7 @@ class NotificationUtil {
                 .addAction(R.drawable.ic_stop,"Stop",stopPendingIntent)
                 .addAction(android.R.drawable.ic_media_pause,"Pause",pausePendingIntent)
             nManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            nManager.createNotificationChannel(CHANNEL_ID_TIMER, CHANNEL_NAME_TIMER,true)
+            nManager.createNotificationChannel(CHANNEL_ID_TIMER, CHANNEL_NAME_TIMER,false)
             nManager.notify(TIMER_ID,nBuilder.build())
 //            updateTimerRunning(secondsRemaining)
         }
@@ -101,14 +101,14 @@ class NotificationUtil {
             val resumeIntent = Intent(context, TimerNotificationActionReceiver::class.java)
             resumeIntent.action = AppConstants.ACTION_RESUME
             val resumePendingIntent = PendingIntent.getBroadcast(context,0,resumeIntent,PendingIntent.FLAG_UPDATE_CURRENT)
-            val nBuilder = getBasicNotificationBuilder(context, CHANNEL_ID_TIMER, true)
+            val nBuilder = getBasicNotificationBuilder(context, CHANNEL_ID_TIMER, false)
             nBuilder.setContentTitle("Timer is paused!")
                 .setContentText("Resume?")
                 .setContentIntent(getPendingIntentWithStack(context,MainActivity::class.java))
                 .addAction(android.R.drawable.ic_media_play,"Resume",resumePendingIntent)
 
             val nManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            nManager.createNotificationChannel(CHANNEL_ID_TIMER, CHANNEL_NAME_TIMER,true)
+            nManager.createNotificationChannel(CHANNEL_ID_TIMER, CHANNEL_NAME_TIMER,false)
             nManager.notify(TIMER_ID,nBuilder.build())
         }
 
