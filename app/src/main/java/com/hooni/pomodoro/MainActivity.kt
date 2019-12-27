@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     enum class TimerState {
-        Stopped, Paused, Running, PauseOnNext
+        Stopped, Paused, Running
     }
 
     // the actual timer which is running
@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolBar)
+        setTimer(STANDARD_POMODORO_TIME)
         initUI()
     }
 
@@ -76,7 +77,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        if (timerState == TimerState.PauseOnNext || timerState == TimerState.Running) {
+        if (timerState == TimerState.Running) {
             timer.cancel()
             val wakeUpTime = setAlarm(this, nowSeconds, secondsRemaining)
             NotificationUtil.showTimerRunning(this, wakeUpTime, secondsRemaining)
@@ -90,7 +91,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initUI() {
-        setTimer(STANDARD_POMODORO_TIME)
         uncheckBoxes()
         initButtons()
     }
@@ -98,55 +98,53 @@ class MainActivity : AppCompatActivity() {
     private fun initButtons() {
         restart.setOnClickListener {
             if (timerState == TimerState.Running) {
-                // pause on end of cycle
-                timerState = TimerState.PauseOnNext
-                updateButtons()
-                showStatusOnToast(it)
-            } else if (timerState == TimerState.Paused || timerState == TimerState.Stopped) {
+                if (PrefUtil.getAutoStart(this)) PrefUtil.setAutoStart(this, false)
+                else PrefUtil.setAutoStart(this, true)
+            } else {
                 // restart
-                updateButtons()
                 setTimer(timerLengthSeconds)
                 uncheckBoxes()
-                showStatusOnToast(it)
                 // TODO: currently a workaround, the timer should be completely initialized and not
                 // onTimerFinished called
                 onTimerFinished()
-                PrefUtil.setCurrentCycle(this,0)
-            } else if (timerState == TimerState.PauseOnNext) {
-                // do not pause on next
-                timerState = TimerState.Running
-                showStatusOnToast(it)
-                updateButtons()
-                // toast should show that it won't stop on next end of the cycle
+                PrefUtil.setCurrentCycle(this, 0)
             }
-
+            updateButtons()
+            showStatusOnToast(it)
         }
 
         startStop.setOnClickListener {
             if (timerState == TimerState.Paused || timerState == TimerState.Stopped) {
                 startTimer()
-                updateButtons()
-                showStatusOnToast(it)
             } else {
                 timer.cancel()
                 timerState = TimerState.Paused
-                updateButtons()
-                showStatusOnToast(it)
             }
+            updateButtons()
+            showStatusOnToast(it)
         }
     }
 
     private fun showStatusOnToast(view: View) {
         when (timerState) {
             TimerState.Running -> {
-                if (view == restart) Toast.makeText(this, "Timer will continue after this cycle", Toast.LENGTH_SHORT).show()
-                else Toast.makeText(this, "Timer started", Toast.LENGTH_SHORT).show()
+                if (!PrefUtil.getAutoStart(this)) {
+                    Toast.makeText(this, "Timer will pause after this cycle", Toast.LENGTH_SHORT)
+                        .show()
+                } else {
+                    if (view == restart) Toast.makeText(
+                        this,
+                        "Timer will continue after this cycle",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    else Toast.makeText(this, "Timer started", Toast.LENGTH_SHORT).show()
                 }
+
+            }
             TimerState.Paused -> {
                 if (view == restart) Toast.makeText(this, "Timer Reset", Toast.LENGTH_SHORT).show()
                 else Toast.makeText(this, "Timer Paused", Toast.LENGTH_SHORT).show()
             }
-            TimerState.PauseOnNext -> Toast.makeText(this,"Timer will pause after this cycle",Toast.LENGTH_SHORT).show()
             TimerState.Stopped -> Toast.makeText(this, "Timer stopped", Toast.LENGTH_SHORT).show()
         }
     }
@@ -154,7 +152,7 @@ class MainActivity : AppCompatActivity() {
     private fun initTimer() {
 
         timerState = PrefUtil.getTimerState(this)
-        when(timerState) {
+        when (timerState) {
             TimerState.Stopped -> {
                 on_break_text.text = getString(R.string.press_play)
                 setNewTimerLength()
@@ -177,7 +175,7 @@ class MainActivity : AppCompatActivity() {
 
         if (secondsRemaining <= 0)
             onTimerFinished()
-        else if (timerState == TimerState.Running || timerState == TimerState.PauseOnNext)
+        else if (timerState == TimerState.Running)
             startTimer()
 
         updateButtons()
@@ -185,12 +183,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startTimer() {
-        when(PrefUtil.getCurrentCycle(this)) {
-            0,2,4,6 -> {
+        when (PrefUtil.getCurrentCycle(this)) {
+            0, 2, 4, 6 -> {
                 // study cycle
                 on_break_text.text = getString(R.string.on_study)
             }
-            1,3,5 -> {
+            1, 3, 5 -> {
                 // short break
                 on_break_text.text = getString(R.string.on_break)
             }
@@ -218,12 +216,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun setNewTimerLength() {
         val lengthInMinutes =
-            when(PrefUtil.getCurrentCycle(this)) {
-                0,2,4,6 -> {
+            when (PrefUtil.getCurrentCycle(this)) {
+                0, 2, 4, 6 -> {
                     // study cycle
                     PrefUtil.getTimerLength(this)
                 }
-                1,3,5 -> {
+                1, 3, 5 -> {
                     // short break
                     PrefUtil.getShortBreakLength(this)
                 }
@@ -282,22 +280,22 @@ class MainActivity : AppCompatActivity() {
         val secondsStr = secondsInMinuteUntilFinished.toString()
         val twoDigitSeconds = if (secondsStr.length == 2) secondsStr else "0$secondsStr"
         timerDisplay.text = getString(R.string.timerDisplay, minutesUntilFinished, twoDigitSeconds)
-        progress_countdown.progress =  (timerLengthSeconds - secondsRemaining).toInt()
+        progress_countdown.progress = (timerLengthSeconds - secondsRemaining).toInt()
     }
 
     private fun updateButtons() {
         when (timerState) {
             TimerState.Running -> {
                 startStop.setImageResource(android.R.drawable.ic_media_pause)
-                restart.setImageResource(R.drawable.ic_break_on_pause)
+                if (PrefUtil.getAutoStart(this)) {
+                    restart.setImageResource(R.drawable.ic_break_on_pause)
+                } else {
+                    restart.setImageResource(R.drawable.ic_continue)
+                }
             }
             TimerState.Paused -> {
                 startStop.setImageResource(android.R.drawable.ic_media_play)
                 restart.setImageResource(R.drawable.ic_reset)
-            }
-            TimerState.PauseOnNext -> {
-                startStop.setImageResource(android.R.drawable.ic_media_pause)
-                restart.setImageResource(R.drawable.ic_continue)
             }
             TimerState.Stopped -> {
                 startStop.setImageResource(android.R.drawable.ic_media_play)
@@ -307,7 +305,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updatePomodoroCounter() {
-        PrefUtil.setCurrentCycle(this,(PrefUtil.getCurrentCycle(this)+1))
+        PrefUtil.setCurrentCycle(this, (PrefUtil.getCurrentCycle(this) + 1))
 
     }
 
@@ -332,7 +330,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun playNotification() {
         val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val player = MediaPlayer.create(this,notification)
+        val player = MediaPlayer.create(this, notification)
         player.start()
     }
 }

@@ -31,10 +31,10 @@
         app:showSeekBarValue="true"/>
 
     <SwitchPreferenceCompat
-        android:key="com.hooni.pomodoro.autostart"
+        android:key="com.hooni.pomodoro.auto_start"
         android:title="Start next cycle automatically"
         android:summary="If turned on, the next cycle will start automatically"
-        android:defaultValue="true"
+        android:defaultValue="false"
         />
 
 

@@ -10,7 +10,6 @@ class PrefUtil {
         private const val TIMER_LENGTH_ID = "com.hooni.pomodoro.timer_length"
         private const val SHORT_BREAK_LENGTH_ID = "com.hooni.pomodoro.short_break_length"
         private const val LONG_BREAK_LENGTH_ID = "com.hooni.pomodoro.long_break_length"
-        private const val AUTO_START_ID = "com.hooni.pomodoro.auto_start"
 
         fun getTimerLength(context: Context): Int {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -27,9 +26,18 @@ class PrefUtil {
             return preferences.getInt(LONG_BREAK_LENGTH_ID,20)
         }
 
+
+        private const val AUTO_START_ID = "com.hooni.pomodoro.auto_start"
+
         fun getAutoStart(context: Context): Boolean {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
             return preferences.getBoolean(AUTO_START_ID,true)
+        }
+
+        fun setAutoStart(context: Context, value: Boolean) {
+            val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+            editor.putBoolean(AUTO_START_ID,value)
+            editor.apply()
         }
 
         private const val PREVIOUS_TIMER_LENGTH_SECONDS_ID = "com.hooni.pomodoro.previous_timer_length"
