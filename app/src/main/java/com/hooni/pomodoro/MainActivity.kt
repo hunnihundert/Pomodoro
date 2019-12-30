@@ -41,6 +41,27 @@ class MainActivity : AppCompatActivity() {
             PrefUtil.setAlarmSetTime(0, context)
         }
 
+        fun playNotification(context: Context) {
+            if(PrefUtil.getPlaySound(context)) {
+                val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                val player = MediaPlayer.create(context, notification)
+                player.start()
+            }
+        }
+
+        fun vibratePhone(context: Context) {
+            if(PrefUtil.getVibrate(context)) {
+                val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                if (vibrator.hasVibrator()) { //
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
+                    } else {
+                        vibrator.vibrate(500)
+                    }
+                }
+            }
+        }
+
         val nowSeconds: Long
             get() = Calendar.getInstance().timeInMillis / 1000
     }
@@ -250,8 +271,8 @@ class MainActivity : AppCompatActivity() {
     private fun onTimerFinished() {
         if(timerState != TimerState.Stopped) {
             updatePomodoroCounter()
-            playNotification()
-            vibratePhone()
+            playNotification(this)
+            vibratePhone(this)
         }
         setNewTimerLength()
         progress_countdown.progress = 0
@@ -330,24 +351,5 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun playNotification() {
-        if(PrefUtil.getPlaySound(this)) {
-            val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            val player = MediaPlayer.create(this, notification)
-            player.start()
-        }
-    }
 
-    private fun vibratePhone() {
-        if(PrefUtil.getVibrate(this)) {
-                val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                if (vibrator.hasVibrator()) { //
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
-                    } else {
-                        vibrator.vibrate(500)
-                    }
-                }
-            }
-    }
 }

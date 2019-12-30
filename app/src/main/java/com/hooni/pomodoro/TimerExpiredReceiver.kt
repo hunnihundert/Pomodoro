@@ -37,6 +37,8 @@ class TimerExpiredReceiver : BroadcastReceiver() {
             val secondsRemaining = PrefUtil.getSecondsRemaining(context)
             val wakeUpTime = MainActivity.setAlarm(context, MainActivity.nowSeconds, secondsRemaining)
             NotificationUtil.showTimerRunning(context, wakeUpTime, secondsRemaining)
+            MainActivity.playNotification(context)
+            MainActivity.vibratePhone(context)
             Toast.makeText(context,"Next Cycle started: ${PrefUtil.getCurrentCycle(context)}",Toast.LENGTH_SHORT).show()
         } else {
             NotificationUtil.showTimerExpired(context)
