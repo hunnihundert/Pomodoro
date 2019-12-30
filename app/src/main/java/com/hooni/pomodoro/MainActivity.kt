@@ -331,19 +331,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun playNotification() {
-        val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val player = MediaPlayer.create(this, notification)
-        player.start()
+        if(PrefUtil.getPlaySound(this)) {
+            val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            val player = MediaPlayer.create(this, notification)
+            player.start()
+        }
     }
 
     private fun vibratePhone() {
-        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        if (vibrator.hasVibrator()) { //
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
-            } else {
-                vibrator.vibrate(500)
+        if(PrefUtil.getVibrate(this)) {
+                val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                if (vibrator.hasVibrator()) { //
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
+                    } else {
+                        vibrator.vibrate(500)
+                    }
+                }
             }
-        }
     }
 }

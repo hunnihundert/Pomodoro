@@ -37,7 +37,18 @@
         android:defaultValue="false"
         />
 
+    <SwitchPreferenceCompat
+        android:key="com.hooni.pomodoro.sound"
+        android:title="Play Notification Sound"
+        android:summary="If turned on, a notification sound will be played when a cycle ends"
+        android:defaultValue="true"
+        />
 
-
+    <SwitchPreferenceCompat
+        android:key="com.hooni.pomodoro.vibration"
+        android:title="Vibrate"
+        android:summary="If turned on, the device will vibrate when a cycle ends"
+        android:defaultValue="true"
+        />
 
     </PreferenceScreen>

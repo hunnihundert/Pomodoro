@@ -10,6 +10,8 @@ class PrefUtil {
         private const val TIMER_LENGTH_ID = "com.hooni.pomodoro.timer_length"
         private const val SHORT_BREAK_LENGTH_ID = "com.hooni.pomodoro.short_break_length"
         private const val LONG_BREAK_LENGTH_ID = "com.hooni.pomodoro.long_break_length"
+        private const val PLAY_SOUND_ID="com.hooni.pomodoro.sound"
+        private const val VIBRATE_ID="com.hooni.pomodoro.vibration"
 
         fun getTimerLength(context: Context): Int {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -24,6 +26,16 @@ class PrefUtil {
         fun getLongBreakLength(context: Context): Int {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
             return preferences.getInt(LONG_BREAK_LENGTH_ID,20)
+        }
+
+        fun getPlaySound(context: Context): Boolean {
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+            return preferences.getBoolean(PLAY_SOUND_ID, true)
+        }
+
+        fun getVibrate(context: Context): Boolean {
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+            return preferences.getBoolean(VIBRATE_ID,true)
         }
 
 
