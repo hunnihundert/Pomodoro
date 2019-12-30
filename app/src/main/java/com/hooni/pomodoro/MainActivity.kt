@@ -6,15 +6,12 @@ import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
 import android.media.RingtoneManager
+import android.os.*
 import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.os.CountDownTimer
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
 import android.widget.Toast
 import com.hooni.pomodoro.util.NotificationUtil
 import com.hooni.pomodoro.util.PrefUtil
@@ -102,12 +99,13 @@ class MainActivity : AppCompatActivity() {
                 else PrefUtil.setAutoStart(this, true)
             } else {
                 // restart
+                timerState = TimerState.Stopped
                 setTimer(timerLengthSeconds)
                 uncheckBoxes()
                 // TODO: currently a workaround, the timer should be completely initialized and not
                 // onTimerFinished called
-                onTimerFinished()
                 PrefUtil.setCurrentCycle(this, 0)
+                onTimerFinished()
             }
             updateButtons()
             showStatusOnToast(it)
@@ -250,14 +248,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onTimerFinished() {
-        playNotification()
-        updatePomodoroCounter()
+        if(timerState != TimerState.Stopped) {
+            updatePomodoroCounter()
+            playNotification()
+            vibratePhone()
+        }
         setNewTimerLength()
         progress_countdown.progress = 0
         PrefUtil.setSecondsRemaining(timerLengthSeconds, this)
         secondsRemaining = timerLengthSeconds
-        updateButtons()
-        updateCountDownUI()
+
 
         if (PrefUtil.getAutoStart(this) && timerState == TimerState.Running) {
             startTimer()
@@ -265,6 +265,8 @@ class MainActivity : AppCompatActivity() {
             on_break_text.text = getString(R.string.press_play)
             timerState = TimerState.Paused
         }
+        updateButtons()
+        updateCountDownUI()
     }
 
     private fun uncheckBoxes() {
@@ -332,5 +334,16 @@ class MainActivity : AppCompatActivity() {
         val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val player = MediaPlayer.create(this, notification)
         player.start()
+    }
+
+    private fun vibratePhone() {
+        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (vibrator.hasVibrator()) { //
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                vibrator.vibrate(500)
+            }
+        }
     }
 }
