@@ -56,9 +56,25 @@ class MainActivity : AppCompatActivity() {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
                     } else {
+
+                        @Suppress("DEPRECATION")
                         vibrator.vibrate(500)
                     }
                 }
+            }
+        }
+
+        fun returnCurrentCycle(cycleNumber: Int): String {
+            return when(cycleNumber) {
+                0 -> AppConstants.FIRST_STUDY
+                1 -> AppConstants.FIRST_BREAK
+                2 -> AppConstants.SECOND_STUDY
+                3 -> AppConstants.SECOND_BREAK
+                4 -> AppConstants.THIRD_STUDY
+                5 -> AppConstants.THIRD_BREAK
+                6 -> AppConstants.FOURTH_STUDY
+                7 -> AppConstants.FOURTH_BREAK
+                else -> "Error"
             }
         }
 

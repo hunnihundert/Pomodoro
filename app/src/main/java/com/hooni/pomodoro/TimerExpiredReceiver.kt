@@ -39,7 +39,7 @@ class TimerExpiredReceiver : BroadcastReceiver() {
             NotificationUtil.showTimerRunning(context, wakeUpTime, secondsRemaining)
             MainActivity.playNotification(context)
             MainActivity.vibratePhone(context)
-            Toast.makeText(context,"Next Cycle started: ${PrefUtil.getCurrentCycle(context)}",Toast.LENGTH_SHORT).show()
+            Toast.makeText(context,MainActivity.returnCurrentCycle(PrefUtil.getCurrentCycle(context)),Toast.LENGTH_SHORT).show()
         } else {
             NotificationUtil.showTimerExpired(context)
             PrefUtil.setTimerState(MainActivity.TimerState.Stopped, context)
