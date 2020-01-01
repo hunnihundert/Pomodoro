@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import com.hooni.pomodoro.util.NotificationUtil
 import com.hooni.pomodoro.util.PrefUtil
@@ -107,6 +108,9 @@ class MainActivity : AppCompatActivity() {
         initTimer()
         removeAlarm(this)
         NotificationUtil.hideTimerNotification(this)
+        if(PrefUtil.getScreenTimeOut(this) && timerState == TimerState.Running) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        else window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
     }
 
     override fun onPause() {

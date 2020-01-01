@@ -51,4 +51,11 @@
         android:defaultValue="true"
         />
 
+    <SwitchPreferenceCompat
+        android:key="com.hooni.pomodoro.screen_timeout"
+        android:title="Screen Timeout"
+        android:summary="If turned on, the screen of the device won't turn off when the time is running"
+        android:defaultValue="false"
+        />
+
     </PreferenceScreen>

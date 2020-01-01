@@ -12,6 +12,12 @@ class PrefUtil {
         private const val LONG_BREAK_LENGTH_ID = "com.hooni.pomodoro.long_break_length"
         private const val PLAY_SOUND_ID="com.hooni.pomodoro.sound"
         private const val VIBRATE_ID="com.hooni.pomodoro.vibration"
+        private const val SCREEN_TIMEOUT = "com.hooni.pomodoro.screen_timeout"
+
+        fun getScreenTimeOut(context: Context): Boolean {
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+            return preferences.getBoolean(SCREEN_TIMEOUT,false)
+        }
 
         fun getTimerLength(context: Context): Int {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -119,6 +125,8 @@ class PrefUtil {
             return if(preferences.getInt(CURRENT_CYCLE,0) >= 7) 0
             else preferences.getInt(CURRENT_CYCLE,0)
         }
+
+
 
     }
 }
