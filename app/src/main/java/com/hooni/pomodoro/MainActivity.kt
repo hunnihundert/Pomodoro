@@ -108,10 +108,17 @@ class MainActivity : AppCompatActivity() {
         initTimer()
         removeAlarm(this)
         NotificationUtil.hideTimerNotification(this)
-        if(PrefUtil.getScreenTimeOut(this) && timerState == TimerState.Running) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        else window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        if(PrefUtil.getScreenTimeOut(this) && timerState == TimerState.Running) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF
+        }
+        else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+        }
 
     }
+
 
     override fun onPause() {
         super.onPause()
