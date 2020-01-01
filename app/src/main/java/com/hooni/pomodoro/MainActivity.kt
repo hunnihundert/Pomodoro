@@ -6,7 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
 import android.media.RingtoneManager
+import android.media.audiofx.Equalizer
+import android.net.Uri
 import android.os.*
+import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
@@ -43,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         fun playNotification(context: Context) {
-            if(PrefUtil.getPlaySound(context)) {
+            if (PrefUtil.getPlaySound(context)) {
                 val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
                 val player = MediaPlayer.create(context, notification)
                 player.start()
@@ -51,11 +54,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         fun vibratePhone(context: Context) {
-            if(PrefUtil.getVibrate(context)) {
+            if (PrefUtil.getVibrate(context)) {
                 val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                 if (vibrator.hasVibrator()) { //
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
+                        vibrator.vibrate(
+                            VibrationEffect.createOneShot(
+                                500,
+                                VibrationEffect.DEFAULT_AMPLITUDE
+                            )
+                        )
                     } else {
 
                         @Suppress("DEPRECATION")
@@ -66,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         fun returnCurrentCycle(cycleNumber: Int): String {
-            return when(cycleNumber) {
+            return when (cycleNumber) {
                 0 -> AppConstants.FIRST_STUDY
                 1 -> AppConstants.FIRST_BREAK
                 2 -> AppConstants.SECOND_STUDY
@@ -108,11 +116,10 @@ class MainActivity : AppCompatActivity() {
         initTimer()
         removeAlarm(this)
         NotificationUtil.hideTimerNotification(this)
-        if(PrefUtil.getScreenTimeOut(this) && timerState == TimerState.Running) {
+        if (PrefUtil.getScreenTimeOut(this) && timerState == TimerState.Running) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF
-        }
-        else {
+        } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
         }
@@ -296,7 +303,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onTimerFinished() {
-        if(timerState != TimerState.Stopped) {
+        if (timerState != TimerState.Stopped) {
             updatePomodoroCounter()
             playNotification(this)
             vibratePhone(this)
@@ -356,7 +363,36 @@ class MainActivity : AppCompatActivity() {
 
     private fun updatePomodoroCounter() {
         PrefUtil.setCurrentCycle(this, (PrefUtil.getCurrentCycle(this) + 1))
+    }
 
+    val checkWritePermission: Boolean
+        get() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                return Settings.System.canWrite(this)
+            } else {
+                return true
+            }
+        }
+
+    private fun allowWritePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val intent =
+                Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:$packageName"))
+            startActivity(intent)
+        }
+    }
+
+    val brightness: Int
+        get() {
+            return Settings.System.getInt(
+                this.contentResolver,
+                Settings.System.SCREEN_BRIGHTNESS,
+                0
+            )
+        }
+
+    private fun setBrightness(value: Int) {
+        Settings.System.putInt(this.contentResolver,Settings.System.SCREEN_BRIGHTNESS,value)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
