@@ -116,14 +116,27 @@ class MainActivity : AppCompatActivity() {
         initTimer()
         removeAlarm(this)
         NotificationUtil.hideTimerNotification(this)
-        if (PrefUtil.getScreenTimeOut(this) && timerState == TimerState.Running) {
+        dimScreen()
+    }
+
+    private fun dimScreen() {
+        if (isDimOn) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
         }
+    }
 
+    private val isDimOn: Boolean
+        get() = PrefUtil.getScreenTimeOut(this) && timerState == TimerState.Running
+
+    override fun onUserInteraction() {
+        super.onUserInteraction()
+        if(window.attributes.screenBrightness == WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF) {
+            window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+        }
     }
 
 
@@ -392,7 +405,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     private fun setBrightness(value: Int) {
-        Settings.System.putInt(this.contentResolver,Settings.System.SCREEN_BRIGHTNESS,value)
+        Settings.System.putInt(this.contentResolver, Settings.System.SCREEN_BRIGHTNESS, value)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
