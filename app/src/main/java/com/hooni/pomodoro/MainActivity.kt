@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
 import android.media.RingtoneManager
-import android.media.audiofx.Equalizer
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
@@ -156,7 +155,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initUI() {
-        uncheckBoxes()
+        resetStatusIcons()
         initButtons()
     }
 
@@ -169,7 +168,7 @@ class MainActivity : AppCompatActivity() {
                 // restart
                 timerState = TimerState.Stopped
                 setTimer(timerLengthSeconds)
-                uncheckBoxes()
+                resetStatusIcons()
                 // TODO: currently a workaround, the timer should be completely initialized and not
                 // onTimerFinished called
                 PrefUtil.setCurrentCycle(this, 0)
@@ -269,6 +268,7 @@ class MainActivity : AppCompatActivity() {
 
         if (timerState == TimerState.Paused || timerState == TimerState.Stopped) timerState =
             TimerState.Running
+        updateStatusIcons()
 
         timer = object : CountDownTimer(secondsRemaining * 1000, 1000) {
             override fun onFinish() = onTimerFinished()
@@ -337,11 +337,63 @@ class MainActivity : AppCompatActivity() {
         updateCountDownUI()
     }
 
-    private fun uncheckBoxes() {
-        pom1.isChecked = false
-        pom2.isChecked = false
-        pom3.isChecked = false
-        pom4.isChecked = false
+    private fun resetStatusIcons() {
+        hourglass0.setImageResource(R.drawable.ic_hourglass_empty_24px)
+        hourglass1.setImageResource(R.drawable.ic_hourglass_empty_24px)
+        hourglass2.setImageResource(R.drawable.ic_hourglass_empty_24px)
+        hourglass3.setImageResource(R.drawable.ic_hourglass_empty_24px)
+        hourglass0.visibility = View.INVISIBLE
+        hourglass1.visibility = View.INVISIBLE
+        hourglass2.visibility = View.INVISIBLE
+        hourglass3.visibility = View.INVISIBLE
+    }
+
+    private fun updateStatusIcons() {
+        when (PrefUtil.getCurrentCycle(this)) {
+            0, 2, 4, 6 -> {
+                //study cycle
+                when(PrefUtil.getCurrentCycle(this)) {
+                    0 -> {
+                        hourglass0.visibility = View.VISIBLE
+
+                    }
+                    2 -> {
+                        hourglass1.visibility = View.VISIBLE
+                    }
+                    4 -> {
+                        hourglass2.visibility = View.VISIBLE
+                    }
+                    6 -> {
+                        hourglass3.visibility = View.VISIBLE
+                    }
+
+                }
+            }
+            1, 3, 5 -> {
+                // short break
+                when(PrefUtil.getCurrentCycle(this)) {
+                    1 -> {
+                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
+                    }
+                    3 -> {
+                        hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
+                    }
+                    5 -> {
+                        hourglass2.setImageResource(R.drawable.ic_hourglass_full_24px)
+                    }
+
+                }
+            }
+            7 -> {
+                // long break
+                hourglass3.setImageResource(R.drawable.ic_hourglass_full_24px)
+
+            }
+            else -> {
+                // error
+
+            }
+        }
     }
 
     private fun updateCountDownUI() {
@@ -378,6 +430,8 @@ class MainActivity : AppCompatActivity() {
         PrefUtil.setCurrentCycle(this, (PrefUtil.getCurrentCycle(this) + 1))
     }
 
+
+    // TODO: set brightness
     val checkWritePermission: Boolean
         get() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

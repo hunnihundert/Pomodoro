@@ -8,4 +8,8 @@
     <string name="settings">Settings</string>
     <string name="on_study">STUDYING</string>
     <string name="press_play">Press Play to Start</string>
+    <string name="cd_fourth_hourglass">fourth hourglass</string>
+    <string name="cd_third_hourglass">third hourglass</string>
+    <string name="cd_second_hourglass">second hourglass</string>
+    <string name="cd_first_hourglass">first hourglass</string>
 </resources>

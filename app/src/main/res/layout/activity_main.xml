@@ -11,95 +11,48 @@
         android:id="@+id/toolBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:menu="@menu/menu"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:title="Pomodoro"
-        app:titleTextColor="@color/colorWhite"
-        app:menu="@menu/menu" />
+        app:titleTextColor="@color/colorWhite" />
 
     <TextView
         android:id="@+id/timerDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="36sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/buttons"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolBar"
         tools:text="00:00" />
 
     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
         android:id="@+id/progress_countdown"
         style="@style/Widget.MaterialProgressBar.ProgressBar"
-        android:minWidth="300dp"
-        android:minHeight="300dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:minWidth="300dp"
+        android:minHeight="300dp"
+        app:layout_constraintBottom_toTopOf="@id/buttons"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/toolBar" />
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/timerDisplay"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolBar"
-        app:layout_constraintVertical_bias="0.0">
-
-        <androidx.appcompat.widget.AppCompatCheckBox
-            android:id="@+id/pom1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:clickable="false"
-            android:theme="@style/CheckboxStyle" />
-
-        <CheckBox
-            android:id="@+id/pom2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:clickable="false"
-            android:theme="@style/CheckboxStyle"
-            />
-
-        <CheckBox
-            android:id="@+id/pom3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:clickable="false"
-            android:theme="@style/CheckboxStyle"
-            />
-
-        <CheckBox
-            android:id="@+id/pom4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:clickable="false"
-            android:theme="@style/CheckboxStyle"
-            />
-
-    </LinearLayout>
-
-    <LinearLayout
+        android:id="@+id/buttons"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/timerDisplay"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintStart_toStartOf="parent">
 
         <ImageButton
             android:id="@+id/restart"
@@ -122,12 +75,53 @@
         android:id="@+id/on_break_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/timerDisplay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/timerDisplay"
         tools:text="@string/on_break"
         tools:visibility="visible" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timerDisplay">
+
+        <ImageView
+            android:id="@+id/hourglass0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/cd_first_hourglass"
+            app:srcCompat="@drawable/ic_hourglass_full_24px" />
+
+        <ImageView
+            android:id="@+id/hourglass1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/cd_second_hourglass"
+            app:srcCompat="@drawable/ic_hourglass_empty_24px" />
+
+        <ImageView
+            android:id="@+id/hourglass2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/cd_third_hourglass"
+            app:srcCompat="@drawable/ic_hourglass_empty_24px" />
+
+        <ImageView
+            android:id="@+id/hourglass3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/cd_fourth_hourglass"
+            app:srcCompat="@drawable/ic_hourglass_empty_24px" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
