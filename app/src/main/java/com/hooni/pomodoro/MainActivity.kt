@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity() {
                 val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
                 val player = MediaPlayer.create(context, notification)
                 player.start()
+                player.release()
             }
         }
 
@@ -65,7 +66,6 @@ class MainActivity : AppCompatActivity() {
                             )
                         )
                     } else {
-
                         @Suppress("DEPRECATION")
                         vibrator.vibrate(500)
                     }
