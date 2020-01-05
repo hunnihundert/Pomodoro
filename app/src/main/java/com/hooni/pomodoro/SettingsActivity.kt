@@ -12,5 +12,6 @@ class SettingsActivity : AppCompatActivity() {
         setSupportActionBar(toolBarSettings)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title="Settings"
+
     }
 }
