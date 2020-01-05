@@ -10,28 +10,28 @@ class PrefUtil {
         private const val TIMER_LENGTH_ID = "com.hooni.pomodoro.timer_length"
         private const val SHORT_BREAK_LENGTH_ID = "com.hooni.pomodoro.short_break_length"
         private const val LONG_BREAK_LENGTH_ID = "com.hooni.pomodoro.long_break_length"
-        private const val PLAY_SOUND_ID="com.hooni.pomodoro.sound"
-        private const val VIBRATE_ID="com.hooni.pomodoro.vibration"
+        private const val PLAY_SOUND_ID = "com.hooni.pomodoro.sound"
+        private const val VIBRATE_ID = "com.hooni.pomodoro.vibration"
         private const val SCREEN_TIMEOUT = "com.hooni.pomodoro.screen_timeout"
 
         fun getScreenTimeOut(context: Context): Boolean {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-            return preferences.getBoolean(SCREEN_TIMEOUT,false)
+            return preferences.getBoolean(SCREEN_TIMEOUT, false)
         }
 
         fun getTimerLength(context: Context): Int {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-            return preferences.getInt(TIMER_LENGTH_ID,25)
+            return preferences.getInt(TIMER_LENGTH_ID, 25)
         }
 
         fun getShortBreakLength(context: Context): Int {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-            return preferences.getInt(SHORT_BREAK_LENGTH_ID,5)
+            return preferences.getInt(SHORT_BREAK_LENGTH_ID, 5)
         }
 
         fun getLongBreakLength(context: Context): Int {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-            return preferences.getInt(LONG_BREAK_LENGTH_ID,20)
+            return preferences.getInt(LONG_BREAK_LENGTH_ID, 20)
         }
 
         fun getPlaySound(context: Context): Boolean {
@@ -41,7 +41,7 @@ class PrefUtil {
 
         fun getVibrate(context: Context): Boolean {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-            return preferences.getBoolean(VIBRATE_ID,true)
+            return preferences.getBoolean(VIBRATE_ID, true)
         }
 
 
@@ -49,16 +49,17 @@ class PrefUtil {
 
         fun getAutoStart(context: Context): Boolean {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-            return preferences.getBoolean(AUTO_START_ID,true)
+            return preferences.getBoolean(AUTO_START_ID, true)
         }
 
         fun setAutoStart(context: Context, value: Boolean) {
             val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
-            editor.putBoolean(AUTO_START_ID,value)
+            editor.putBoolean(AUTO_START_ID, value)
             editor.apply()
         }
 
-        private const val PREVIOUS_TIMER_LENGTH_SECONDS_ID = "com.hooni.pomodoro.previous_timer_length"
+        private const val PREVIOUS_TIMER_LENGTH_SECONDS_ID =
+            "com.hooni.pomodoro.previous_timer_length"
 
         fun getPreviousTimerLengthSeconds(context: Context): Long {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -82,7 +83,7 @@ class PrefUtil {
         fun setTimerState(timerState: MainActivity.TimerState, context: Context) {
             val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
             val ordinal = timerState.ordinal
-            editor.putInt(TIMER_STATE_ID,ordinal)
+            editor.putInt(TIMER_STATE_ID, ordinal)
             editor.apply()
         }
 
@@ -103,12 +104,12 @@ class PrefUtil {
 
         fun getAlarmSetTime(context: Context): Long {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-            return preferences.getLong(ALARM_SET_TIME_ID,0)
+            return preferences.getLong(ALARM_SET_TIME_ID, 0)
         }
 
         fun setAlarmSetTime(time: Long, context: Context) {
             val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
-            editor.putLong(ALARM_SET_TIME_ID,time)
+            editor.putLong(ALARM_SET_TIME_ID, time)
             editor.apply()
         }
 
@@ -116,16 +117,15 @@ class PrefUtil {
 
         fun setCurrentCycle(context: Context, currentCycle: Int) {
             val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
-            editor.putInt(CURRENT_CYCLE,currentCycle)
+            editor.putInt(CURRENT_CYCLE, currentCycle)
             editor.apply()
         }
 
         fun getCurrentCycle(context: Context): Int {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-            return if(preferences.getInt(CURRENT_CYCLE,0) >= 7) 0
-            else preferences.getInt(CURRENT_CYCLE,0)
+            return if (preferences.getInt(CURRENT_CYCLE, 0) >= 7) 0
+            else preferences.getInt(CURRENT_CYCLE, 0)
         }
-
 
 
     }

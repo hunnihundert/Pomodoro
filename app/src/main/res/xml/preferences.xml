@@ -1,64 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <SeekBarPreference
-        android:key="com.hooni.pomodoro.timer_length"
-        android:title="Timer Minutes"
-        android:summary="Select Pomodoro Time"
-        android:defaultValue="25"
-        app:min="1"
-        android:max="60"
-        app:showSeekBarValue="true"
-        app:icon="@drawable/ic_study"/>
+    <PreferenceCategory android:title="Cycle Times">
+        <SeekBarPreference
+            android:defaultValue="25"
+            android:key="com.hooni.pomodoro.timer_length"
+            android:max="60"
+            android:summary="Select Pomodoro Time"
+            android:title="Timer Minutes"
+            app:icon="@drawable/ic_study"
+            app:min="1"
+            app:showSeekBarValue="true" />
 
-    <SeekBarPreference
-        android:key="com.hooni.pomodoro.short_break_length"
-        android:title="Short Break Minutes"
-        android:summary="Select Short Break Time"
-        android:defaultValue="5"
-        app:min="1"
-        android:max="30"
-        app:showSeekBarValue="true"
-        app:icon="@drawable/ic_short_break"/>
+        <SeekBarPreference
+            android:defaultValue="5"
+            android:key="com.hooni.pomodoro.short_break_length"
+            android:max="30"
+            android:summary="Select Short Break Time"
+            android:title="Short Break Minutes"
+            app:icon="@drawable/ic_short_break"
+            app:min="1"
+            app:showSeekBarValue="true" />
 
-    <SeekBarPreference
-        android:defaultValue="20"
-        android:key="com.hooni.pomodoro.break_length"
-        android:max="60"
-        android:summary="Select Long Break Time"
-        android:title="Long Break Minutes"
-        app:min="5"
-        app:showSeekBarValue="true"
-        android:icon="@drawable/ic_long_break"/>
+        <SeekBarPreference
+            android:defaultValue="20"
+            android:icon="@drawable/ic_long_break"
+            android:key="com.hooni.pomodoro.break_length"
+            android:max="60"
+            android:summary="Select Long Break Time"
+            android:title="Long Break Minutes"
+            app:min="5"
+            app:showSeekBarValue="true" />
+    </PreferenceCategory>
 
-    <SwitchPreferenceCompat
-        android:defaultValue="false"
-        android:key="com.hooni.pomodoro.auto_start"
-        android:summary="If turned on, the next cycle will start automatically"
-        android:title="Start next cycle automatically"
-        app:icon="@drawable/ic_auto_start" />
+    <PreferenceCategory android:title="Notifications">
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:icon="@drawable/ic_play_sound"
+            android:key="com.hooni.pomodoro.sound"
+            android:summary="If turned on, a notification sound will be played when a cycle ends"
+            android:title="Play Notification Sound" />
 
-    <SwitchPreferenceCompat
-        android:key="com.hooni.pomodoro.sound"
-        android:title="Play Notification Sound"
-        android:summary="If turned on, a notification sound will be played when a cycle ends"
-        android:defaultValue="true"
-        android:icon="@drawable/ic_play_sound"/>
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:icon="@drawable/ic_vibration_24px"
+            android:key="com.hooni.pomodoro.vibration"
+            android:summary="If turned on, the device will vibrate when a cycle ends"
+            android:title="Vibrate" />
+    </PreferenceCategory>
 
-    <SwitchPreferenceCompat
-        android:key="com.hooni.pomodoro.vibration"
-        android:title="Vibrate"
-        android:summary="If turned on, the device will vibrate when a cycle ends"
-        android:defaultValue="true"
-        android:icon="@drawable/ic_vibration_24px"/>
+    <PreferenceCategory android:title="Other">
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="com.hooni.pomodoro.auto_start"
+            android:summary="If turned on, the next cycle will start automatically"
+            android:title="Start next cycle automatically"
+            app:icon="@drawable/ic_auto_start" />
 
-    <SwitchPreferenceCompat
-        android:key="com.hooni.pomodoro.screen_timeout"
-        android:title="Screen Timeout"
-        android:summary="If turned on, the screen of the device won't turn off when the time is running"
-        android:defaultValue="false"
-        android:icon="@drawable/ic_screen_time_out"/>
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:icon="@drawable/ic_screen_time_out"
+            android:key="com.hooni.pomodoro.screen_timeout"
+            android:summary="If turned on, the screen of the device won't turn off when the time is running"
+            android:title="Screen Timeout" />
+    </PreferenceCategory>
 
-    </PreferenceScreen>
+</PreferenceScreen>
