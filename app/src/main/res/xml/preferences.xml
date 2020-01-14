@@ -64,6 +64,17 @@
             android:key="com.hooni.pomodoro.screen_timeout"
             android:summary="If turned on, the screen of the device won't turn off when the time is running"
             android:title="Screen Timeout" />
+
+        <ListPreference
+            android:key="com.hooni.pomodoro.dark_mode"
+            android:title="Dark Mode"
+            android:defaultValue="MODE_NIGHT_FOLLOW_SYSTEM"
+            android:entries="@array/dark_mode_options_names_array"
+            android:entryValues="@array/dark_mode_options_values_array"
+            android:summary="Select the preferred Screen Mode"
+            />
+
+
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -4,23 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    style="@style/Theme.MaterialComponents.DayNight">
 
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolBar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/menu"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:title="Pomodoro"
-        app:titleTextColor="@color/colorWhite" />
 
     <TextView
         android:id="@+id/timerDisplay"
@@ -30,12 +16,14 @@
         app:layout_constraintBottom_toTopOf="@id/buttons"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolBar"
-        tools:text="00:00" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="00:00"
+        style="@style/Theme.MaterialComponents.DayNight"
+        />
 
     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
         android:id="@+id/progress_countdown"
-        style="@style/Widget.MaterialProgressBar.ProgressBar"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minWidth="300dp"
@@ -43,13 +31,15 @@
         app:layout_constraintBottom_toTopOf="@id/buttons"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolBar" />
+        app:layout_constraintTop_toTopOf="parent"
+        style="@style/Widget.MaterialProgressBar.ProgressBar"/>
 
     <LinearLayout
         android:id="@+id/buttons"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -60,7 +50,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:contentDescription="@string/pause_on_break_restart_description"
-            app:srcCompat="@android:drawable/ic_menu_rotate" />
+            app:srcCompat="@android:drawable/ic_menu_rotate"/>
 
         <ImageButton
             android:id="@+id/startStop"
@@ -68,7 +58,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:contentDescription="@string/pause_now_continue_description"
-            app:srcCompat="@android:drawable/ic_media_play" />
+            app:srcCompat="@android:drawable/ic_media_play"/>
     </LinearLayout>
 
     <TextView
@@ -80,7 +70,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="@string/on_break"
-        tools:visibility="visible" />
+        tools:visibility="visible"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -89,7 +79,8 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/timerDisplay">
+        app:layout_constraintTop_toBottomOf="@+id/timerDisplay"
+        style="@style/Theme.MaterialComponents.DayNight">
 
         <ImageView
             android:id="@+id/hourglass0"
@@ -97,7 +88,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:contentDescription="@string/cd_first_hourglass"
-            app:srcCompat="@drawable/ic_hourglass_full_24px" />
+            app:srcCompat="@drawable/ic_hourglass_full_24px"
+            style="@style/Theme.MaterialComponents.DayNight"/>
 
         <ImageView
             android:id="@+id/hourglass1"
@@ -105,7 +97,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:contentDescription="@string/cd_second_hourglass"
-            app:srcCompat="@drawable/ic_hourglass_empty_24px" />
+            app:srcCompat="@drawable/ic_hourglass_empty_24px"/>
 
         <ImageView
             android:id="@+id/hourglass2"
@@ -113,7 +105,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:contentDescription="@string/cd_third_hourglass"
-            app:srcCompat="@drawable/ic_hourglass_empty_24px" />
+            app:srcCompat="@drawable/ic_hourglass_empty_24px"/>
 
         <ImageView
             android:id="@+id/hourglass3"
@@ -121,7 +113,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:contentDescription="@string/cd_fourth_hourglass"
-            app:srcCompat="@drawable/ic_hourglass_empty_24px" />
+            app:srcCompat="@drawable/ic_hourglass_empty_24px"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

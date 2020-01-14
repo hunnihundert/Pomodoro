@@ -8,6 +8,7 @@ import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.*
+import android.preference.PreferenceManager
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
@@ -16,6 +17,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.BuildCompat
 import com.hooni.pomodoro.util.NotificationUtil
 import com.hooni.pomodoro.util.PrefUtil
 import kotlinx.android.synthetic.main.activity_main.*
@@ -25,6 +28,9 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val STANDARD_POMODORO_TIME: Long = 1500000 // 25 Minutes
+        const val LIGHT_MODE = "light"
+        const val DARK_MODE = "dark"
+        const val DEFAULT_MODE = "default"
 
         fun setAlarm(context: Context, nowSeconds: Long, secondsRemaining: Long): Long {
             val wakeUpTime = (nowSeconds + secondsRemaining) * 1000
@@ -105,7 +111,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(toolBar)
         setTimer(STANDARD_POMODORO_TIME)
         initUI()
     }
@@ -115,6 +120,7 @@ class MainActivity : AppCompatActivity() {
         initTimer()
         removeAlarm(this)
         NotificationUtil.hideTimerNotification(this)
+        applyTheme(PreferenceManager.getDefaultSharedPreferences(this).getString("com.hooni.pomodoro.dark_mode","MODE_NIGHT_FOLLOW_SYSTEM")!!)
         dimScreen()
     }
 
@@ -428,6 +434,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun updatePomodoroCounter() {
         PrefUtil.setCurrentCycle(this, (PrefUtil.getCurrentCycle(this) + 1))
+    }
+
+    private fun applyTheme(theme: String) {
+        when(theme) {
+
+            LIGHT_MODE -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            DARK_MODE -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            DEFAULT_MODE -> if(BuildCompat.isAtLeastQ()) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
+            }
+        }
     }
 
 

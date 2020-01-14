@@ -12,6 +12,10 @@ class SettingsActivity : AppCompatActivity() {
         setSupportActionBar(toolBarSettings)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title="Settings"
+    }
+
+    override fun onResume() {
+        super.onResume()
 
     }
 }
