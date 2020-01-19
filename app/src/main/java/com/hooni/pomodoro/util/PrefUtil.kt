@@ -13,7 +13,7 @@ class PrefUtil {
         private const val PLAY_SOUND_ID = "com.hooni.pomodoro.sound"
         private const val VIBRATE_ID = "com.hooni.pomodoro.vibration"
         private const val SCREEN_TIMEOUT = "com.hooni.pomodoro.screen_timeout"
-        private const val DARK_MODE= "com.hooni.pomodoro.dark_mode"
+
 
         fun getScreenTimeOut(context: Context): Boolean {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -45,10 +45,7 @@ class PrefUtil {
             return preferences.getBoolean(VIBRATE_ID, true)
         }
 
-        fun getDarkMode(context: Context): String? {
-            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-            return preferences.getString(DARK_MODE,"default")
-        }
+
 
 
         private const val AUTO_START_ID = "com.hooni.pomodoro.auto_start"
@@ -133,6 +130,17 @@ class PrefUtil {
             else preferences.getInt(CURRENT_CYCLE, 0)
         }
 
+        private const val DARK_MODE= "com.hooni.pomodoro.dark_mode"
 
+        fun getDarkMode(context: Context): String? {
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+            return preferences.getString(DARK_MODE,"default")
+        }
+
+        fun setDarkMode(context: Context, screenMode: String) {
+            val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+            editor.putString(DARK_MODE,screenMode)
+            editor.apply()
+        }
     }
 }

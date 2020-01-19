@@ -12,6 +12,7 @@ import android.preference.PreferenceManager
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -28,9 +29,9 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val STANDARD_POMODORO_TIME: Long = 1500000 // 25 Minutes
-        const val LIGHT_MODE = "light"
-        const val DARK_MODE = "dark"
-        const val DEFAULT_MODE = "default"
+        private const val LIGHT_MODE = "light"
+        private const val DARK_MODE = "dark"
+        private const val DEFAULT_MODE = "default"
 
         fun setAlarm(context: Context, nowSeconds: Long, secondsRemaining: Long): Long {
             val wakeUpTime = (nowSeconds + secondsRemaining) * 1000
@@ -94,6 +95,7 @@ class MainActivity : AppCompatActivity() {
 
         val nowSeconds: Long
             get() = Calendar.getInstance().timeInMillis / 1000
+
     }
 
     enum class TimerState {
@@ -110,6 +112,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        when(PrefUtil.getDarkMode(this)) {
+            LIGHT_MODE -> setTheme(R.style.lightTheme)
+            DARK_MODE -> setTheme(R.style.darkTheme)
+        }
         setContentView(R.layout.activity_main)
         setTimer(STANDARD_POMODORO_TIME)
         initUI()
@@ -117,10 +123,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        setNightMode()
         initTimer()
         removeAlarm(this)
         NotificationUtil.hideTimerNotification(this)
-        applyTheme(PreferenceManager.getDefaultSharedPreferences(this).getString("com.hooni.pomodoro.dark_mode","MODE_NIGHT_FOLLOW_SYSTEM")!!)
         dimScreen()
     }
 
@@ -139,7 +145,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onUserInteraction() {
         super.onUserInteraction()
-        if(window.attributes.screenBrightness == WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF) {
+        if (window.attributes.screenBrightness == WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF) {
             window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
         }
     }
@@ -164,6 +170,38 @@ class MainActivity : AppCompatActivity() {
         resetStatusIcons()
         initButtons()
     }
+
+    private fun setNightMode() {
+        val outValue = TypedValue()
+        theme.resolveAttribute(R.attr.themeName, outValue, true)
+        val currentTheme = outValue.string.toString()
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+            setTheme(R.style.darkTheme)
+        } else {
+            when (PrefUtil.getDarkMode(this)) {
+                LIGHT_MODE -> {
+                    setTheme(R.style.lightTheme)
+                    PrefUtil.setDarkMode(this, LIGHT_MODE)
+
+                }
+                DARK_MODE -> {
+                    setTheme(R.style.darkTheme)
+                    PrefUtil.setDarkMode(this, DARK_MODE)
+                }
+                else -> {
+                    if (BuildCompat.isAtLeastQ()) {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                    } else {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
+                    }
+                }
+            }
+        }
+        theme.resolveAttribute(R.attr.themeName, outValue, true)
+        val newTheme = outValue.string.toString()
+        if(currentTheme != newTheme) recreate()
+    }
+
 
     private fun initButtons() {
         restart.setOnClickListener {
@@ -193,6 +231,11 @@ class MainActivity : AppCompatActivity() {
             }
             updateButtons()
             showStatusOnToast(it)
+        }
+
+        settings.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -358,7 +401,7 @@ class MainActivity : AppCompatActivity() {
         when (PrefUtil.getCurrentCycle(this)) {
             0, 2, 4, 6 -> {
                 //study cycle
-                when(PrefUtil.getCurrentCycle(this)) {
+                when (PrefUtil.getCurrentCycle(this)) {
                     0 -> {
                         hourglass0.visibility = View.VISIBLE
 
@@ -377,7 +420,7 @@ class MainActivity : AppCompatActivity() {
             }
             1, 3, 5 -> {
                 // short break
-                when(PrefUtil.getCurrentCycle(this)) {
+                when (PrefUtil.getCurrentCycle(this)) {
                     1 -> {
                         hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
                     }
@@ -434,19 +477,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun updatePomodoroCounter() {
         PrefUtil.setCurrentCycle(this, (PrefUtil.getCurrentCycle(this) + 1))
-    }
-
-    private fun applyTheme(theme: String) {
-        when(theme) {
-
-            LIGHT_MODE -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            DARK_MODE -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            DEFAULT_MODE -> if(BuildCompat.isAtLeastQ()) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
-            }
-        }
     }
 
 

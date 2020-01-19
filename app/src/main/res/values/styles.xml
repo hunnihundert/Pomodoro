@@ -2,17 +2,28 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
-
+    <style name="lightTheme" parent="Theme.MaterialComponents.DayNight">
+        <item name="themeName">light</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="backgroundColor">@color/colorBackGroundDay</item>
+        <item name="progressIndicator">@color/colorProgressIndicatorDay</item>
+        <item name="textColor">@color/colorTextColorDay</item>
+        <item name="tintColor">@color/colorTintColorDay</item>
+        <item name="buttonColor">@color/colorButtonColorDay</item>
     </style>
 
-    <style name="CheckboxStyle" parent="AppTheme">
-        <item name="colorAccent">@color/colorPrimary</item>
-        <item name="android:textColorSecondary">@color/colorAccent</item>
+    <style name="darkTheme" parent="Theme.MaterialComponents.DayNight">
+        <item name="themeName">dark</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="backgroundColor">@color/colorBackGroundNight</item>
+        <item name="progressIndicator">@color/colorProgressIndicatorNight</item>
+        <item name="textColor">@color/colorTextColorNight</item>
+        <item name="tintColor">@color/colorTintColorNight</item>
+        <item name="buttonColor">@color/colorButtonColorNight</item>
     </style>
 
 </resources>

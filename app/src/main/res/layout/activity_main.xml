@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    style="@style/Theme.MaterialComponents.DayNight">
+    style="@style/lightTheme"
+    android:background="?attr/backgroundColor">
 
 
     <TextView
@@ -13,6 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="36sp"
+        android:textColor="?attr/textColor"
         app:layout_constraintBottom_toTopOf="@id/buttons"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,6 +30,7 @@
         android:layout_height="wrap_content"
         android:minWidth="300dp"
         android:minHeight="300dp"
+        app:mpb_progressTint="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@id/buttons"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,6 +49,7 @@
 
         <ImageButton
             android:id="@+id/restart"
+            android:background="?attr/buttonColor"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -54,6 +58,7 @@
 
         <ImageButton
             android:id="@+id/startStop"
+            android:background="?attr/buttonColor"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -66,6 +71,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="visible"
+        android:textColor="?attr/textColor"
         app:layout_constraintBottom_toTopOf="@+id/timerDisplay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -84,6 +90,7 @@
 
         <ImageView
             android:id="@+id/hourglass0"
+            android:tint="?attr/tintColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -93,6 +100,7 @@
 
         <ImageView
             android:id="@+id/hourglass1"
+            android:tint="?attr/tintColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -101,6 +109,7 @@
 
         <ImageView
             android:id="@+id/hourglass2"
+            android:tint="?attr/tintColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -109,11 +118,21 @@
 
         <ImageView
             android:id="@+id/hourglass3"
+            android:tint="?attr/tintColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:contentDescription="@string/cd_fourth_hourglass"
             app:srcCompat="@drawable/ic_hourglass_empty_24px"/>
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_settings" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

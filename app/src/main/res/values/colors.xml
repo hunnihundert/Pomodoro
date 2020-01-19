@@ -5,4 +5,18 @@
     <color name="colorAccent">#D81B60</color>
     <color name="colorBlack">#000000</color>
     <color name="colorWhite">#FFFFFF</color>
+
+<!--    day mode colors -->
+    <color name="colorBackGroundDay">#FF6347</color>
+    <color name="colorProgressIndicatorDay">#FFFFFF</color>
+    <color name="colorTextColorDay">#000000</color>
+    <color name="colorTintColorDay">#FF6347</color>
+    <color name="colorButtonColorDay">#FFa494</color>
+
+<!--    night mode colors -->
+    <color name="colorBackGroundNight">#000</color>
+    <color name="colorProgressIndicatorNight">#FF6347</color>
+    <color name="colorTextColorNight">#FFFFFF</color>
+    <color name="colorTintColorNight">#FF6347</color>
+    <color name="colorButtonColorNight">#FFa494</color>
 </resources>

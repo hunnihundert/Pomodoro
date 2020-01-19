@@ -14,8 +14,4 @@ class SettingsActivity : AppCompatActivity() {
         supportActionBar?.title="Settings"
     }
 
-    override fun onResume() {
-        super.onResume()
-
-    }
 }
