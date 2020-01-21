@@ -14,7 +14,8 @@
         <receiver
             android:name=".TimerNotificationActionReceiver"
             android:enabled="true"
-            android:exported="false">
+            android:exported="false"
+            android:theme="@style/lightTheme">
             <intent-filter>
                 <action android:name="stop" />
                 <action android:name="pause" />
@@ -38,7 +39,7 @@
         <activity android:name=".SettingsActivity"
             android:label="Settings"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:theme="@style/lightTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.hooni.pomodoro.MainActivity"/>

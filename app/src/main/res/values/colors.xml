@@ -9,7 +9,7 @@
 <!--    day mode colors -->
     <color name="colorBackGroundDay">#FF6347</color>
     <color name="colorProgressIndicatorDay">#FFFFFF</color>
-    <color name="colorTextColorDay">#000000</color>
+    <color name="colorTextColorDay">#FFFFFF</color>
     <color name="colorTintColorDay">#FF6347</color>
     <color name="colorButtonColorDay">#FFa494</color>
 

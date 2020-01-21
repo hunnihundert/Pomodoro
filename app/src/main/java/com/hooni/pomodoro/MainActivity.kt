@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
             DARK_MODE -> setTheme(R.style.darkTheme)
         }
         setContentView(R.layout.activity_main)
-        setTimer(STANDARD_POMODORO_TIME)
+        setTimer(PrefUtil.getSecondsRemaining(this) * 1000)
         initUI()
     }
 
@@ -133,22 +133,26 @@ class MainActivity : AppCompatActivity() {
     private fun dimScreen() {
         if (isDimOn) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF
+            //window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+            //window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
         }
     }
 
     private val isDimOn: Boolean
         get() = PrefUtil.getScreenTimeOut(this) && timerState == TimerState.Running
 
-    override fun onUserInteraction() {
-        super.onUserInteraction()
-        if (window.attributes.screenBrightness == WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF) {
-            window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
-        }
-    }
+
+    // TODO: if the screen does not turn off but sets brightness to minimum, user interaction should
+    //  make the screen bright again
+
+//    override fun onUserInteraction() {
+//        super.onUserInteraction()
+//        if (window.attributes.screenBrightness == WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF) {
+//            window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+//        }
+//    }
 
 
     override fun onPause() {

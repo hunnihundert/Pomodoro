@@ -2,135 +2,132 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/lightTheme"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    style="@style/lightTheme"
-    android:background="?attr/backgroundColor">
+    android:background="?attr/backgroundColor"
+    tools:context=".MainActivity">
 
 
     <TextView
         android:id="@+id/timerDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="36sp"
         android:textColor="?attr/textColor"
-        app:layout_constraintBottom_toTopOf="@id/buttons"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="00:00"
-        style="@style/Theme.MaterialComponents.DayNight"
-        />
+        tools:text="00:00" />
 
     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
         android:id="@+id/progress_countdown"
 
+        style="@style/Widget.MaterialProgressBar.ProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minWidth="300dp"
         android:minHeight="300dp"
-        app:mpb_progressTint="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@id/buttons"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        style="@style/Widget.MaterialProgressBar.ProgressBar"/>
+        app:mpb_progressTint="?attr/progressIndicator" />
 
-    <LinearLayout
-        android:id="@+id/buttons"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <ImageButton
-            android:id="@+id/restart"
-            android:background="?attr/buttonColor"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:contentDescription="@string/pause_on_break_restart_description"
-            app:srcCompat="@android:drawable/ic_menu_rotate"/>
-
-        <ImageButton
-            android:id="@+id/startStop"
-            android:background="?attr/buttonColor"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:contentDescription="@string/pause_now_continue_description"
-            app:srcCompat="@android:drawable/ic_media_play"/>
-    </LinearLayout>
 
     <TextView
         android:id="@+id/on_break_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="visible"
         android:textColor="?attr/textColor"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/timerDisplay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="@string/on_break"
-        tools:visibility="visible"/>
+        tools:visibility="visible" />
 
     <LinearLayout
+        style="@style/Theme.MaterialComponents.DayNight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/timerDisplay"
-        style="@style/Theme.MaterialComponents.DayNight">
+        app:layout_constraintTop_toBottomOf="@+id/timerDisplay">
 
         <ImageView
             android:id="@+id/hourglass0"
-            android:tint="?attr/tintColor"
+            style="@style/Theme.MaterialComponents.DayNight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:contentDescription="@string/cd_first_hourglass"
-            app:srcCompat="@drawable/ic_hourglass_full_24px"
-            style="@style/Theme.MaterialComponents.DayNight"/>
+            android:tint="?attr/tintColor"
+            app:srcCompat="@drawable/ic_hourglass_full_24px" />
 
         <ImageView
             android:id="@+id/hourglass1"
-            android:tint="?attr/tintColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:contentDescription="@string/cd_second_hourglass"
-            app:srcCompat="@drawable/ic_hourglass_empty_24px"/>
+            android:tint="?attr/tintColor"
+            app:srcCompat="@drawable/ic_hourglass_empty_24px" />
 
         <ImageView
             android:id="@+id/hourglass2"
-            android:tint="?attr/tintColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:contentDescription="@string/cd_third_hourglass"
-            app:srcCompat="@drawable/ic_hourglass_empty_24px"/>
+            android:tint="?attr/tintColor"
+            app:srcCompat="@drawable/ic_hourglass_empty_24px" />
 
         <ImageView
             android:id="@+id/hourglass3"
-            android:tint="?attr/tintColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:contentDescription="@string/cd_fourth_hourglass"
-            app:srcCompat="@drawable/ic_hourglass_empty_24px"/>
+            android:tint="?attr/tintColor"
+            app:srcCompat="@drawable/ic_hourglass_empty_24px" />
     </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/startStop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/pause_now_continue_description"
+        android:src="@android:drawable/ic_media_play"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/restart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/pause_on_break_restart_description"
+        app:srcCompat="@android:drawable/ic_menu_rotate"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
         android:id="@+id/settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:background="@android:color/transparent"
+        android:scaleType="center"
+        android:scaleX="1.3"
+        android:scaleY="1.3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_settings" />
