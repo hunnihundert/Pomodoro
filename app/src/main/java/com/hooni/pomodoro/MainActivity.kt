@@ -128,6 +128,13 @@ class MainActivity : AppCompatActivity() {
         removeAlarm(this)
         NotificationUtil.hideTimerNotification(this)
         dimScreen()
+        hideNaviAndStatusBar()
+    }
+
+    private fun hideNaviAndStatusBar() {
+        window.decorView.apply {
+            systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
+        }
     }
 
     private fun dimScreen() {
@@ -308,7 +315,7 @@ class MainActivity : AppCompatActivity() {
             }
             1, 3, 5 -> {
                 // short break
-                on_break_text.text = getString(R.string.on_break)
+                on_break_text.text = getString(R.string.on_study_break)
             }
             7 -> {
                 // long break
