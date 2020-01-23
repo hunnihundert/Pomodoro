@@ -103,6 +103,7 @@
         android:layout_gravity="end|bottom"
         android:layout_margin="16dp"
         android:contentDescription="@string/pause_now_continue_description"
+        android:backgroundTint="@color/colorWhite"
         android:src="@android:drawable/ic_media_play"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -114,6 +115,7 @@
         android:layout_gravity="end|bottom"
         android:layout_margin="16dp"
         android:contentDescription="@string/pause_on_break_restart_description"
+        android:backgroundTint="@color/colorWhite"
         app:srcCompat="@android:drawable/ic_menu_rotate"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

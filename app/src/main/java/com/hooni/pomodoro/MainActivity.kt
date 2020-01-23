@@ -8,7 +8,6 @@ import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.*
-import android.preference.PreferenceManager
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
@@ -28,7 +27,6 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        const val STANDARD_POMODORO_TIME: Long = 1500000 // 25 Minutes
         private const val LIGHT_MODE = "light"
         private const val DARK_MODE = "dark"
         private const val DEFAULT_MODE = "default"
@@ -119,6 +117,20 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setTimer(PrefUtil.getSecondsRemaining(this) * 1000)
         initUI()
+
+
+
+        window.decorView.setOnSystemUiVisibilityChangeListener { visibility ->
+            if (visibility and View.SYSTEM_UI_FLAG_FULLSCREEN != 0) {
+                Toast.makeText(this,"visibility changed != 0",Toast.LENGTH_SHORT).show()
+            } else {
+                val startHiding = Runnable {
+                    hideNaviAndStatusBar()
+                }
+                Handler().postDelayed(startHiding,2000)
+                Toast.makeText(this,"visibility changed == 0",Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onResume() {
@@ -133,9 +145,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun hideNaviAndStatusBar() {
         window.decorView.apply {
-            systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
+            systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN
         }
     }
+
+
 
     private fun dimScreen() {
         if (isDimOn) {
@@ -239,6 +253,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 timer.cancel()
                 timerState = TimerState.Paused
+                on_break_text.text = getString(R.string.on_break)
             }
             updateButtons()
             showStatusOnToast(it)
