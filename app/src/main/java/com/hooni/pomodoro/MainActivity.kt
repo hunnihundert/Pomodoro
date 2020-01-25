@@ -27,9 +27,7 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        private const val LIGHT_MODE = "light"
-        private const val DARK_MODE = "dark"
-        private const val DEFAULT_MODE = "default"
+
 
         fun setAlarm(context: Context, nowSeconds: Long, secondsRemaining: Long): Long {
             val wakeUpTime = (nowSeconds + secondsRemaining) * 1000
@@ -103,16 +101,15 @@ class MainActivity : AppCompatActivity() {
     // the actual timer which is running
     private lateinit var timer: CountDownTimer
 
-
     private var timerLengthSeconds = 0L
     private var timerState = TimerState.Stopped
     private var secondsRemaining = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        when(PrefUtil.getDarkMode(this)) {
-            LIGHT_MODE -> setTheme(R.style.lightTheme)
-            DARK_MODE -> setTheme(R.style.darkTheme)
+        when (PrefUtil.getDarkMode(this)) {
+            AppConstants.LIGHT_MODE -> setTheme(R.style.lightTheme)
+            AppConstants.DARK_MODE -> setTheme(R.style.darkTheme)
         }
         setContentView(R.layout.activity_main)
         setTimer(PrefUtil.getSecondsRemaining(this) * 1000)
@@ -121,14 +118,11 @@ class MainActivity : AppCompatActivity() {
 
 
         window.decorView.setOnSystemUiVisibilityChangeListener { visibility ->
-            if (visibility and View.SYSTEM_UI_FLAG_FULLSCREEN != 0) {
-                Toast.makeText(this,"visibility changed != 0",Toast.LENGTH_SHORT).show()
-            } else {
+            if (visibility and View.SYSTEM_UI_FLAG_FULLSCREEN == 0) {
                 val startHiding = Runnable {
                     hideNaviAndStatusBar()
                 }
-                Handler().postDelayed(startHiding,2000)
-                Toast.makeText(this,"visibility changed == 0",Toast.LENGTH_SHORT).show()
+                Handler().postDelayed(startHiding, 2000)
             }
         }
     }
@@ -137,6 +131,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         setNightMode()
         initTimer()
+        updateStatusIcons()
         removeAlarm(this)
         NotificationUtil.hideTimerNotification(this)
         dimScreen()
@@ -145,10 +140,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun hideNaviAndStatusBar() {
         window.decorView.apply {
-            systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
+            systemUiVisibility =
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
         }
     }
-
 
 
     private fun dimScreen() {
@@ -204,14 +199,14 @@ class MainActivity : AppCompatActivity() {
             setTheme(R.style.darkTheme)
         } else {
             when (PrefUtil.getDarkMode(this)) {
-                LIGHT_MODE -> {
+                AppConstants.LIGHT_MODE -> {
                     setTheme(R.style.lightTheme)
-                    PrefUtil.setDarkMode(this, LIGHT_MODE)
+                    PrefUtil.setDarkMode(this, AppConstants.LIGHT_MODE)
 
                 }
-                DARK_MODE -> {
+                AppConstants.DARK_MODE -> {
                     setTheme(R.style.darkTheme)
-                    PrefUtil.setDarkMode(this, DARK_MODE)
+                    PrefUtil.setDarkMode(this, AppConstants.DARK_MODE)
                 }
                 else -> {
                     if (BuildCompat.isAtLeastQ()) {
@@ -224,7 +219,7 @@ class MainActivity : AppCompatActivity() {
         }
         theme.resolveAttribute(R.attr.themeName, outValue, true)
         val newTheme = outValue.string.toString()
-        if(currentTheme != newTheme) recreate()
+        if (currentTheme != newTheme) recreate()
     }
 
 
@@ -429,17 +424,33 @@ class MainActivity : AppCompatActivity() {
                 //study cycle
                 when (PrefUtil.getCurrentCycle(this)) {
                     0 -> {
+                        resetStatusIcons()
                         hourglass0.visibility = View.VISIBLE
 
                     }
                     2 -> {
+                        hourglass0.visibility = View.VISIBLE
                         hourglass1.visibility = View.VISIBLE
+                        hourglass2.visibility = View.INVISIBLE
+                        hourglass3.visibility = View.INVISIBLE
+                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
                     }
                     4 -> {
+                        hourglass0.visibility = View.VISIBLE
+                        hourglass1.visibility = View.VISIBLE
                         hourglass2.visibility = View.VISIBLE
+                        hourglass3.visibility = View.INVISIBLE
+                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
+                        hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
                     }
                     6 -> {
+                        hourglass0.visibility = View.VISIBLE
+                        hourglass1.visibility = View.VISIBLE
+                        hourglass2.visibility = View.VISIBLE
                         hourglass3.visibility = View.VISIBLE
+                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
+                        hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
+                        hourglass2.setImageResource(R.drawable.ic_hourglass_full_24px)
                     }
 
                 }
@@ -448,21 +459,44 @@ class MainActivity : AppCompatActivity() {
                 // short break
                 when (PrefUtil.getCurrentCycle(this)) {
                     1 -> {
+                        hourglass0.visibility = View.VISIBLE
                         hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
+                        hourglass1.setImageResource(R.drawable.ic_hourglass_empty_24px)
+                        hourglass2.setImageResource(R.drawable.ic_hourglass_empty_24px)
+                        hourglass3.setImageResource(R.drawable.ic_hourglass_empty_24px)
+
                     }
                     3 -> {
+                        hourglass0.visibility = View.VISIBLE
+                        hourglass1.visibility = View.VISIBLE
+                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
                         hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
+                        hourglass2.setImageResource(R.drawable.ic_hourglass_empty_24px)
+                        hourglass3.setImageResource(R.drawable.ic_hourglass_empty_24px)
+
                     }
                     5 -> {
+                        hourglass0.visibility = View.VISIBLE
+                        hourglass1.visibility = View.VISIBLE
+                        hourglass2.visibility = View.VISIBLE
+                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
+                        hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
                         hourglass2.setImageResource(R.drawable.ic_hourglass_full_24px)
+                        hourglass3.setImageResource(R.drawable.ic_hourglass_empty_24px)
                     }
 
                 }
             }
             7 -> {
                 // long break
+                hourglass0.visibility = View.VISIBLE
+                hourglass1.visibility = View.VISIBLE
+                hourglass2.visibility = View.VISIBLE
+                hourglass3.visibility = View.VISIBLE
+                hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
+                hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
+                hourglass2.setImageResource(R.drawable.ic_hourglass_full_24px)
                 hourglass3.setImageResource(R.drawable.ic_hourglass_full_24px)
-
             }
             else -> {
                 // error
@@ -539,15 +573,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
-        Log.d("main", "onCreateOptionsMenu")
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        Log.d("main", "onOptionsItemSelected")
         return when (item.itemId) {
             R.id.menu_item_settings -> {
-                Log.d("main", "onOptionsItemSelected // menu selected")
                 val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
                 true
