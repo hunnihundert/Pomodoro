@@ -9,20 +9,17 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
-import androidx.appcompat.app.AppCompatActivity
-import android.util.Log
 import android.util.TypedValue
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.WindowManager
+import android.view.*
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.BuildCompat
 import com.hooni.pomodoro.util.NotificationUtil
 import com.hooni.pomodoro.util.PrefUtil
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -141,8 +138,10 @@ class MainActivity : AppCompatActivity() {
     private fun hideNaviAndStatusBar() {
         window.decorView.apply {
             systemUiVisibility =
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         }
+        window.attributes.flags = WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION or WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+
     }
 
 

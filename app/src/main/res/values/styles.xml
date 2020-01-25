@@ -4,7 +4,7 @@
     <style name="lightTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="themeName">light</item>
         <item name="android:windowFullscreen">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
+
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccentDay</item>
@@ -18,7 +18,6 @@
     <style name="darkTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="themeName">dark</item>
         <item name="android:windowFullscreen">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccentNight</item>
