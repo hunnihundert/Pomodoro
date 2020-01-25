@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
     <PreferenceCategory android:title="Cycle Times">
         <SeekBarPreference
@@ -26,7 +27,7 @@
         <SeekBarPreference
             android:defaultValue="20"
             android:icon="@drawable/ic_long_break"
-            android:key="com.hooni.pomodoro.break_length"
+            android:key="com.hooni.pomodoro.long_break_length"
             android:max="60"
             android:summary="Select Long Break Time"
             android:title="Long Break Minutes"

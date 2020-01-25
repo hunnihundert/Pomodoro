@@ -8,15 +8,11 @@ import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.*
-import android.preference.PreferenceManager
 import android.provider.Settings
-import androidx.appcompat.app.AppCompatActivity
-import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.WindowManager
+import android.util.TypedValue
+import android.view.*
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.BuildCompat
 import com.hooni.pomodoro.util.NotificationUtil
@@ -24,13 +20,11 @@ import com.hooni.pomodoro.util.PrefUtil
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
+
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        const val STANDARD_POMODORO_TIME: Long = 1500000 // 25 Minutes
-        const val LIGHT_MODE = "light"
-        const val DARK_MODE = "dark"
-        const val DEFAULT_MODE = "default"
+
 
         fun setAlarm(context: Context, nowSeconds: Long, secondsRemaining: Long): Long {
             val wakeUpTime = (nowSeconds + secondsRemaining) * 1000
@@ -94,6 +88,7 @@ class MainActivity : AppCompatActivity() {
 
         val nowSeconds: Long
             get() = Calendar.getInstance().timeInMillis / 1000
+
     }
 
     enum class TimerState {
@@ -103,46 +98,76 @@ class MainActivity : AppCompatActivity() {
     // the actual timer which is running
     private lateinit var timer: CountDownTimer
 
-
     private var timerLengthSeconds = 0L
     private var timerState = TimerState.Stopped
     private var secondsRemaining = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        when (PrefUtil.getDarkMode(this)) {
+            AppConstants.LIGHT_MODE -> setTheme(R.style.lightTheme)
+            AppConstants.DARK_MODE -> setTheme(R.style.darkTheme)
+        }
         setContentView(R.layout.activity_main)
-        setTimer(STANDARD_POMODORO_TIME)
+        setTimer(PrefUtil.getSecondsRemaining(this) * 1000)
         initUI()
+
+
+
+        window.decorView.setOnSystemUiVisibilityChangeListener { visibility ->
+            if (visibility and View.SYSTEM_UI_FLAG_FULLSCREEN == 0) {
+                val startHiding = Runnable {
+                    hideNaviAndStatusBar()
+                }
+                Handler().postDelayed(startHiding, 2000)
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
+        setNightMode()
         initTimer()
+        updateStatusIcons()
         removeAlarm(this)
         NotificationUtil.hideTimerNotification(this)
-        applyTheme(PreferenceManager.getDefaultSharedPreferences(this).getString("com.hooni.pomodoro.dark_mode","MODE_NIGHT_FOLLOW_SYSTEM")!!)
         dimScreen()
+        hideNaviAndStatusBar()
     }
+
+    private fun hideNaviAndStatusBar() {
+        window.decorView.apply {
+            systemUiVisibility =
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        }
+        window.attributes.flags = WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION or WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+
+    }
+
 
     private fun dimScreen() {
         if (isDimOn) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF
+            //window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+            //window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
         }
     }
 
     private val isDimOn: Boolean
         get() = PrefUtil.getScreenTimeOut(this) && timerState == TimerState.Running
 
-    override fun onUserInteraction() {
-        super.onUserInteraction()
-        if(window.attributes.screenBrightness == WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF) {
-            window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
-        }
-    }
+
+    // TODO: if the screen does not turn off but sets brightness to minimum, user interaction should
+    //  make the screen bright again
+
+//    override fun onUserInteraction() {
+//        super.onUserInteraction()
+//        if (window.attributes.screenBrightness == WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF) {
+//            window.attributes.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+//        }
+//    }
 
 
     override fun onPause() {
@@ -164,6 +189,38 @@ class MainActivity : AppCompatActivity() {
         resetStatusIcons()
         initButtons()
     }
+
+    private fun setNightMode() {
+        val outValue = TypedValue()
+        theme.resolveAttribute(R.attr.themeName, outValue, true)
+        val currentTheme = outValue.string.toString()
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+            setTheme(R.style.darkTheme)
+        } else {
+            when (PrefUtil.getDarkMode(this)) {
+                AppConstants.LIGHT_MODE -> {
+                    setTheme(R.style.lightTheme)
+                    PrefUtil.setDarkMode(this, AppConstants.LIGHT_MODE)
+
+                }
+                AppConstants.DARK_MODE -> {
+                    setTheme(R.style.darkTheme)
+                    PrefUtil.setDarkMode(this, AppConstants.DARK_MODE)
+                }
+                else -> {
+                    if (BuildCompat.isAtLeastQ()) {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                    } else {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
+                    }
+                }
+            }
+        }
+        theme.resolveAttribute(R.attr.themeName, outValue, true)
+        val newTheme = outValue.string.toString()
+        if (currentTheme != newTheme) recreate()
+    }
+
 
     private fun initButtons() {
         restart.setOnClickListener {
@@ -190,9 +247,15 @@ class MainActivity : AppCompatActivity() {
             } else {
                 timer.cancel()
                 timerState = TimerState.Paused
+                on_break_text.text = getString(R.string.on_break)
             }
             updateButtons()
             showStatusOnToast(it)
+        }
+
+        settings.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -261,7 +324,7 @@ class MainActivity : AppCompatActivity() {
             }
             1, 3, 5 -> {
                 // short break
-                on_break_text.text = getString(R.string.on_break)
+                on_break_text.text = getString(R.string.on_study_break)
             }
             7 -> {
                 // long break
@@ -358,42 +421,81 @@ class MainActivity : AppCompatActivity() {
         when (PrefUtil.getCurrentCycle(this)) {
             0, 2, 4, 6 -> {
                 //study cycle
-                when(PrefUtil.getCurrentCycle(this)) {
+                when (PrefUtil.getCurrentCycle(this)) {
                     0 -> {
+                        resetStatusIcons()
                         hourglass0.visibility = View.VISIBLE
 
                     }
                     2 -> {
+                        hourglass0.visibility = View.VISIBLE
                         hourglass1.visibility = View.VISIBLE
+                        hourglass2.visibility = View.INVISIBLE
+                        hourglass3.visibility = View.INVISIBLE
+                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
                     }
                     4 -> {
+                        hourglass0.visibility = View.VISIBLE
+                        hourglass1.visibility = View.VISIBLE
                         hourglass2.visibility = View.VISIBLE
+                        hourglass3.visibility = View.INVISIBLE
+                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
+                        hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
                     }
                     6 -> {
+                        hourglass0.visibility = View.VISIBLE
+                        hourglass1.visibility = View.VISIBLE
+                        hourglass2.visibility = View.VISIBLE
                         hourglass3.visibility = View.VISIBLE
+                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
+                        hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
+                        hourglass2.setImageResource(R.drawable.ic_hourglass_full_24px)
                     }
 
                 }
             }
             1, 3, 5 -> {
                 // short break
-                when(PrefUtil.getCurrentCycle(this)) {
+                when (PrefUtil.getCurrentCycle(this)) {
                     1 -> {
+                        hourglass0.visibility = View.VISIBLE
                         hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
+                        hourglass1.setImageResource(R.drawable.ic_hourglass_empty_24px)
+                        hourglass2.setImageResource(R.drawable.ic_hourglass_empty_24px)
+                        hourglass3.setImageResource(R.drawable.ic_hourglass_empty_24px)
+
                     }
                     3 -> {
+                        hourglass0.visibility = View.VISIBLE
+                        hourglass1.visibility = View.VISIBLE
+                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
                         hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
+                        hourglass2.setImageResource(R.drawable.ic_hourglass_empty_24px)
+                        hourglass3.setImageResource(R.drawable.ic_hourglass_empty_24px)
+
                     }
                     5 -> {
+                        hourglass0.visibility = View.VISIBLE
+                        hourglass1.visibility = View.VISIBLE
+                        hourglass2.visibility = View.VISIBLE
+                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
+                        hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
                         hourglass2.setImageResource(R.drawable.ic_hourglass_full_24px)
+                        hourglass3.setImageResource(R.drawable.ic_hourglass_empty_24px)
                     }
 
                 }
             }
             7 -> {
                 // long break
+                hourglass0.visibility = View.VISIBLE
+                hourglass1.visibility = View.VISIBLE
+                hourglass2.visibility = View.VISIBLE
+                hourglass3.visibility = View.VISIBLE
+                hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
+                hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
+                hourglass2.setImageResource(R.drawable.ic_hourglass_full_24px)
                 hourglass3.setImageResource(R.drawable.ic_hourglass_full_24px)
-
             }
             else -> {
                 // error
@@ -436,19 +538,6 @@ class MainActivity : AppCompatActivity() {
         PrefUtil.setCurrentCycle(this, (PrefUtil.getCurrentCycle(this) + 1))
     }
 
-    private fun applyTheme(theme: String) {
-        when(theme) {
-
-            LIGHT_MODE -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            DARK_MODE -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            DEFAULT_MODE -> if(BuildCompat.isAtLeastQ()) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
-            }
-        }
-    }
-
 
     // TODO: set brightness
     val checkWritePermission: Boolean
@@ -483,15 +572,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
-        Log.d("main", "onCreateOptionsMenu")
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        Log.d("main", "onOptionsItemSelected")
         return when (item.itemId) {
             R.id.menu_item_settings -> {
-                Log.d("main", "onOptionsItemSelected // menu selected")
                 val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
                 true

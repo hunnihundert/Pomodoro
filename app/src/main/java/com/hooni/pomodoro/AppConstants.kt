@@ -15,5 +15,8 @@ class AppConstants {
         const val THIRD_BREAK = "3rd Short Break"
         const val FOURTH_STUDY = "4th Study Cycle"
         const val FOURTH_BREAK = "Long Break"
+
+        const val LIGHT_MODE = "light"
+        const val DARK_MODE = "dark"
     }
 }
