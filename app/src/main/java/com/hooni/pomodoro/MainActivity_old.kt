@@ -17,11 +17,10 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.BuildCompat
 import com.hooni.pomodoro.util.NotificationUtil
 import com.hooni.pomodoro.util.PrefUtil
-import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity_old : AppCompatActivity() {
 
     companion object {
 

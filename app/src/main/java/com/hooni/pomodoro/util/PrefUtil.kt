@@ -2,7 +2,7 @@ package com.hooni.pomodoro.util
 
 import android.content.Context
 import android.preference.PreferenceManager
-import com.hooni.pomodoro.MainActivity
+import com.hooni.pomodoro.MainActivity_old
 
 class PrefUtil {
 
@@ -77,13 +77,13 @@ class PrefUtil {
 
         private const val TIMER_STATE_ID = "com.hooni.pomodoro.timer_state"
 
-        fun getTimerState(context: Context): MainActivity.TimerState {
+        fun getTimerState(context: Context): MainActivity_old.TimerState {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
             val ordinal = preferences.getInt(TIMER_STATE_ID, 0)
-            return MainActivity.TimerState.values()[ordinal]
+            return MainActivity_old.TimerState.values()[ordinal]
         }
 
-        fun setTimerState(timerState: MainActivity.TimerState, context: Context) {
+        fun setTimerState(timerState: MainActivity_old.TimerState, context: Context) {
             val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
             val ordinal = timerState.ordinal
             editor.putInt(TIMER_STATE_ID, ordinal)

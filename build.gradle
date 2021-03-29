@@ -5,12 +5,12 @@ buildscript {
     ext.compose_version = '1.0.0-beta01'
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 }
     dependencies {

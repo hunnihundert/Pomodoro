@@ -14,12 +14,10 @@ import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.hooni.pomodoro.AppConstants
-import com.hooni.pomodoro.MainActivity
+import com.hooni.pomodoro.MainActivity_old
 import com.hooni.pomodoro.R
 import com.hooni.pomodoro.TimerNotificationActionReceiver
 import java.util.*
-import kotlin.concurrent.schedule
-import kotlin.concurrent.scheduleAtFixedRate
 
 class NotificationUtil {
     companion object {
@@ -50,7 +48,7 @@ class NotificationUtil {
             val nBuilder = getBasicNotificationBuilder(context, CHANNEL_ID_TIMER, false)
             nBuilder.setContentTitle("Timer Expired!")
                 .setContentText("Start Again?")
-                .setContentIntent(getPendingIntentWithStack(context,MainActivity::class.java))
+                .setContentIntent(getPendingIntentWithStack(context, MainActivity_old::class.java))
                 .addAction(android.R.drawable.ic_media_play,"Start",startPendingIntent)
 
             val nManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -78,7 +76,7 @@ class NotificationUtil {
             // TODO: content title should show what cycle it is (number needs to get replaced)
             nBuilder.setContentTitle("Timer Running! ${PrefUtil.getCurrentCycle(context)}")
                 .setContentText("End: ${df.format(Date(wakeUpTime))}")
-                .setContentIntent(getPendingIntentWithStack(context,MainActivity::class.java))
+                .setContentIntent(getPendingIntentWithStack(context, MainActivity_old::class.java))
                 .setOngoing(true)
                 .addAction(R.drawable.ic_stop,"Stop",stopPendingIntent)
                 .addAction(android.R.drawable.ic_media_pause,"Pause",pausePendingIntent)
@@ -104,7 +102,7 @@ class NotificationUtil {
             val nBuilder = getBasicNotificationBuilder(context, CHANNEL_ID_TIMER, false)
             nBuilder.setContentTitle("Timer is paused!")
                 .setContentText("Resume?")
-                .setContentIntent(getPendingIntentWithStack(context,MainActivity::class.java))
+                .setContentIntent(getPendingIntentWithStack(context, MainActivity_old::class.java))
                 .addAction(android.R.drawable.ic_media_play,"Resume",resumePendingIntent)
 
             val nManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
