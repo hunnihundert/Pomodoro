@@ -3,7 +3,6 @@ package com.hooni.pomodoro
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.hooni.pomodoro.util.PrefUtil
-import kotlinx.android.synthetic.main.activity_settings.*
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -18,7 +17,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.activity_settings)
-        setSupportActionBar(toolBarSettings)
+        //setSupportActionBar(toolBarSettings)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Settings"
     }

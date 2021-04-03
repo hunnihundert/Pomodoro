@@ -35,15 +35,15 @@ class TimerExpiredReceiver : BroadcastReceiver() {
                 }
             PrefUtil.setSecondsRemaining(lengthInMinutes * 60L, context)
             val secondsRemaining = PrefUtil.getSecondsRemaining(context)
-            val wakeUpTime = MainActivity_old.setAlarm(context, MainActivity_old.nowSeconds, secondsRemaining)
+            val wakeUpTime = MainActivity.setAlarm(context, MainActivity.nowSeconds, secondsRemaining)
             NotificationUtil.showTimerRunning(context, wakeUpTime, secondsRemaining)
-            MainActivity_old.playNotification(context)
-            MainActivity_old.vibratePhone(context)
+            MainActivity.playNotification(context)
+            MainActivity.vibratePhone(context)
             Toast.makeText(context,
-                MainActivity_old.returnCurrentCycle(PrefUtil.getCurrentCycle(context)),Toast.LENGTH_SHORT).show()
+                MainActivity.returnCurrentCycle(PrefUtil.getCurrentCycle(context)),Toast.LENGTH_SHORT).show()
         } else {
             NotificationUtil.showTimerExpired(context)
-            PrefUtil.setTimerState(MainActivity_old.TimerState.Stopped, context)
+            PrefUtil.setTimerState(MainActivity.TimerState.Stopped, context)
             PrefUtil.setAlarmSetTime(0, context)
         }
 

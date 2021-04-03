@@ -11,16 +11,22 @@ import android.os.*
 import android.provider.Settings
 import android.util.TypedValue
 import android.view.*
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.BuildCompat
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.hooni.pomodoro.databinding.ActivityMainOldBinding
 import com.hooni.pomodoro.util.NotificationUtil
 import com.hooni.pomodoro.util.PrefUtil
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar
 import java.util.*
 
 
-class MainActivity_old : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     companion object {
 
@@ -101,13 +107,28 @@ class MainActivity_old : AppCompatActivity() {
     private var timerState = TimerState.Stopped
     private var secondsRemaining = 0L
 
+    private lateinit var binding: ActivityMainOldBinding
+
+    private lateinit var restart: FloatingActionButton
+    private lateinit var startStop: FloatingActionButton
+    private lateinit var onBreakText: TextView
+    private lateinit var progressCountdown: MaterialProgressBar
+    private lateinit var hourglass0: ImageView
+    private lateinit var hourglass1: ImageView
+    private lateinit var hourglass2: ImageView
+    private lateinit var hourglass3: ImageView
+    private lateinit var timerDisplay: TextView
+    private lateinit var settings: ImageButton
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         when (PrefUtil.getDarkMode(this)) {
             AppConstants.LIGHT_MODE -> setTheme(R.style.lightTheme)
             AppConstants.DARK_MODE -> setTheme(R.style.darkTheme)
         }
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainOldBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setTimer(PrefUtil.getSecondsRemaining(this) * 1000)
         initUI()
 
@@ -185,8 +206,22 @@ class MainActivity_old : AppCompatActivity() {
     }
 
     private fun initUI() {
+        initBinding()
         resetStatusIcons()
         initButtons()
+    }
+
+    private fun initBinding() {
+        restart = binding.restart
+        startStop = binding.startStop
+        onBreakText = binding.onBreakText
+        progressCountdown = binding.progressCountdown
+        hourglass0 = binding.hourglass0
+        hourglass1 = binding.hourglass1
+        hourglass2 = binding.hourglass2
+        hourglass3 = binding.hourglass3
+        timerDisplay = binding.timerDisplay
+        settings = binding.settings
     }
 
     private fun setNightMode() {
@@ -246,7 +281,7 @@ class MainActivity_old : AppCompatActivity() {
             } else {
                 timer.cancel()
                 timerState = TimerState.Paused
-                on_break_text.text = getString(R.string.on_break)
+                onBreakText.text = getString(R.string.on_break)
             }
             updateButtons()
             showStatusOnToast(it)
@@ -287,11 +322,11 @@ class MainActivity_old : AppCompatActivity() {
         timerState = PrefUtil.getTimerState(this)
         when (timerState) {
             TimerState.Stopped -> {
-                on_break_text.text = getString(R.string.press_play)
+                onBreakText.text = getString(R.string.press_play)
                 setNewTimerLength()
             }
             TimerState.Paused -> {
-                on_break_text.text = getString(R.string.on_break)
+                onBreakText.text = getString(R.string.on_break)
                 setPreviousTimerLength()
             }
             else -> setPreviousTimerLength()
@@ -319,15 +354,15 @@ class MainActivity_old : AppCompatActivity() {
         when (PrefUtil.getCurrentCycle(this)) {
             0, 2, 4, 6 -> {
                 // study cycle
-                on_break_text.text = getString(R.string.on_study)
+                onBreakText.text = getString(R.string.on_study)
             }
             1, 3, 5 -> {
                 // short break
-                on_break_text.text = getString(R.string.on_study_break)
+                onBreakText.text = getString(R.string.on_study_break)
             }
             7 -> {
                 // long break
-                on_break_text.text = getString(R.string.on_long_break)
+                onBreakText.text = getString(R.string.on_long_break)
             }
             else -> {
                 // error
@@ -369,18 +404,18 @@ class MainActivity_old : AppCompatActivity() {
                 }
             }
         timerLengthSeconds = (lengthInMinutes * 60L)
-        progress_countdown.max = timerLengthSeconds.toInt()
+        progressCountdown.max = timerLengthSeconds.toInt()
     }
 
     private fun setPreviousTimerLength() {
         timerLengthSeconds = PrefUtil.getPreviousTimerLengthSeconds(this)
-        progress_countdown.max = timerLengthSeconds.toInt()
+        progressCountdown.max = timerLengthSeconds.toInt()
     }
 
     private fun setTimer(time: Long) {
         val lengthInMinutes = time / 60000L
         timerLengthSeconds = (lengthInMinutes * 60L)
-        progress_countdown.max = timerLengthSeconds.toInt()
+        progressCountdown.max = timerLengthSeconds.toInt()
     }
 
     private fun onTimerFinished() {
@@ -390,7 +425,7 @@ class MainActivity_old : AppCompatActivity() {
             vibratePhone(this)
         }
         setNewTimerLength()
-        progress_countdown.progress = 0
+        progressCountdown.progress = 0
         PrefUtil.setSecondsRemaining(timerLengthSeconds, this)
         secondsRemaining = timerLengthSeconds
 
@@ -398,7 +433,7 @@ class MainActivity_old : AppCompatActivity() {
         if (PrefUtil.getAutoStart(this) && timerState == TimerState.Running) {
             startTimer()
         } else {
-            on_break_text.text = getString(R.string.press_play)
+            onBreakText.text = getString(R.string.press_play)
             timerState = TimerState.Paused
         }
         updateButtons()
@@ -509,7 +544,7 @@ class MainActivity_old : AppCompatActivity() {
         val secondsStr = secondsInMinuteUntilFinished.toString()
         val twoDigitSeconds = if (secondsStr.length == 2) secondsStr else "0$secondsStr"
         timerDisplay.text = getString(R.string.timerDisplay, minutesUntilFinished, twoDigitSeconds)
-        progress_countdown.progress = (timerLengthSeconds - secondsRemaining).toInt()
+        progressCountdown.progress = (timerLengthSeconds - secondsRemaining).toInt()
     }
 
     private fun updateButtons() {
@@ -584,6 +619,4 @@ class MainActivity_old : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
-
 }

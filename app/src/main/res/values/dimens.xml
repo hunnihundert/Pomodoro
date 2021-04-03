@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="fontSize_timer_time">36sp</dimen>
+    <dimen name="width_timer_progressBar">300dp</dimen>
+    <dimen name="height_timer_progressBar">300dp</dimen>
+    <dimen name="width_timer_pomodoroIndicator">24dp</dimen>
+    <dimen name="height_timer_pomodoroIndicator">24dp</dimen>
+</resources>

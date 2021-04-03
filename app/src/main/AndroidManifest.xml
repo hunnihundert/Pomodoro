@@ -28,7 +28,7 @@
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".MainActivity_old">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,10 +38,10 @@
 
         <activity android:name=".SettingsActivity"
             android:label="Settings"
-            android:parentActivityName=".MainActivity_old">
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hooni.pomodoro.MainActivity_old"/>
+                android:value="com.hooni.pomodoro.MainActivity"/>
 
         </activity>
 
