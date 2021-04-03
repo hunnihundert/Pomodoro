@@ -19,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.BuildCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.hooni.pomodoro.databinding.ActivityMainOldBinding
 import com.hooni.pomodoro.util.NotificationUtil
 import com.hooni.pomodoro.util.PrefUtil
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar
@@ -107,7 +106,7 @@ class MainActivity : AppCompatActivity() {
     private var timerState = TimerState.Stopped
     private var secondsRemaining = 0L
 
-    private lateinit var binding: ActivityMainOldBinding
+    //private lateinit var binding: ActivityMainOldBinding
 
     private lateinit var restart: FloatingActionButton
     private lateinit var startStop: FloatingActionButton
@@ -127,8 +126,8 @@ class MainActivity : AppCompatActivity() {
             AppConstants.LIGHT_MODE -> setTheme(R.style.lightTheme)
             AppConstants.DARK_MODE -> setTheme(R.style.darkTheme)
         }
-        binding = ActivityMainOldBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        //binding = ActivityMainOldBinding.inflate(layoutInflater)
+        //setContentView(binding.root)
         setTimer(PrefUtil.getSecondsRemaining(this) * 1000)
         initUI()
 
@@ -212,16 +211,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initBinding() {
-        restart = binding.restart
-        startStop = binding.startStop
-        onBreakText = binding.onBreakText
-        progressCountdown = binding.progressCountdown
-        hourglass0 = binding.hourglass0
-        hourglass1 = binding.hourglass1
-        hourglass2 = binding.hourglass2
-        hourglass3 = binding.hourglass3
-        timerDisplay = binding.timerDisplay
-        settings = binding.settings
+//        restart = binding.restart
+//        startStop = binding.startStop
+//        onBreakText = binding.onBreakText
+//        progressCountdown = binding.progressCountdown
+//        hourglass0 = binding.hourglass0
+//        hourglass1 = binding.hourglass1
+//        hourglass2 = binding.hourglass2
+//        hourglass3 = binding.hourglass3
+//        timerDisplay = binding.timerDisplay
+//        settings = binding.settings
     }
 
     private fun setNightMode() {
@@ -441,101 +440,101 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun resetStatusIcons() {
-        hourglass0.setImageResource(R.drawable.ic_hourglass_empty_24px)
-        hourglass1.setImageResource(R.drawable.ic_hourglass_empty_24px)
-        hourglass2.setImageResource(R.drawable.ic_hourglass_empty_24px)
-        hourglass3.setImageResource(R.drawable.ic_hourglass_empty_24px)
-        hourglass0.visibility = View.INVISIBLE
-        hourglass1.visibility = View.INVISIBLE
-        hourglass2.visibility = View.INVISIBLE
-        hourglass3.visibility = View.INVISIBLE
+//        hourglass0.setImageResource(R.drawable.ic_hourglass_empty_24px)
+//        hourglass1.setImageResource(R.drawable.ic_hourglass_empty_24px)
+//        hourglass2.setImageResource(R.drawable.ic_hourglass_empty_24px)
+//        hourglass3.setImageResource(R.drawable.ic_hourglass_empty_24px)
+//        hourglass0.visibility = View.INVISIBLE
+//        hourglass1.visibility = View.INVISIBLE
+//        hourglass2.visibility = View.INVISIBLE
+//        hourglass3.visibility = View.INVISIBLE
     }
 
     private fun updateStatusIcons() {
-        when (PrefUtil.getCurrentCycle(this)) {
-            0, 2, 4, 6 -> {
-                //study cycle
-                when (PrefUtil.getCurrentCycle(this)) {
-                    0 -> {
-                        resetStatusIcons()
-                        hourglass0.visibility = View.VISIBLE
-
-                    }
-                    2 -> {
-                        hourglass0.visibility = View.VISIBLE
-                        hourglass1.visibility = View.VISIBLE
-                        hourglass2.visibility = View.INVISIBLE
-                        hourglass3.visibility = View.INVISIBLE
-                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
-                    }
-                    4 -> {
-                        hourglass0.visibility = View.VISIBLE
-                        hourglass1.visibility = View.VISIBLE
-                        hourglass2.visibility = View.VISIBLE
-                        hourglass3.visibility = View.INVISIBLE
-                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
-                        hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
-                    }
-                    6 -> {
-                        hourglass0.visibility = View.VISIBLE
-                        hourglass1.visibility = View.VISIBLE
-                        hourglass2.visibility = View.VISIBLE
-                        hourglass3.visibility = View.VISIBLE
-                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
-                        hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
-                        hourglass2.setImageResource(R.drawable.ic_hourglass_full_24px)
-                    }
-
-                }
-            }
-            1, 3, 5 -> {
-                // short break
-                when (PrefUtil.getCurrentCycle(this)) {
-                    1 -> {
-                        hourglass0.visibility = View.VISIBLE
-                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
-                        hourglass1.setImageResource(R.drawable.ic_hourglass_empty_24px)
-                        hourglass2.setImageResource(R.drawable.ic_hourglass_empty_24px)
-                        hourglass3.setImageResource(R.drawable.ic_hourglass_empty_24px)
-
-                    }
-                    3 -> {
-                        hourglass0.visibility = View.VISIBLE
-                        hourglass1.visibility = View.VISIBLE
-                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
-                        hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
-                        hourglass2.setImageResource(R.drawable.ic_hourglass_empty_24px)
-                        hourglass3.setImageResource(R.drawable.ic_hourglass_empty_24px)
-
-                    }
-                    5 -> {
-                        hourglass0.visibility = View.VISIBLE
-                        hourglass1.visibility = View.VISIBLE
-                        hourglass2.visibility = View.VISIBLE
-                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
-                        hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
-                        hourglass2.setImageResource(R.drawable.ic_hourglass_full_24px)
-                        hourglass3.setImageResource(R.drawable.ic_hourglass_empty_24px)
-                    }
-
-                }
-            }
-            7 -> {
-                // long break
-                hourglass0.visibility = View.VISIBLE
-                hourglass1.visibility = View.VISIBLE
-                hourglass2.visibility = View.VISIBLE
-                hourglass3.visibility = View.VISIBLE
-                hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
-                hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
-                hourglass2.setImageResource(R.drawable.ic_hourglass_full_24px)
-                hourglass3.setImageResource(R.drawable.ic_hourglass_full_24px)
-            }
-            else -> {
-                // error
-
-            }
-        }
+//        when (PrefUtil.getCurrentCycle(this)) {
+//            0, 2, 4, 6 -> {
+//                //study cycle
+//                when (PrefUtil.getCurrentCycle(this)) {
+//                    0 -> {
+//                        resetStatusIcons()
+//                        hourglass0.visibility = View.VISIBLE
+//
+//                    }
+//                    2 -> {
+//                        hourglass0.visibility = View.VISIBLE
+//                        hourglass1.visibility = View.VISIBLE
+//                        hourglass2.visibility = View.INVISIBLE
+//                        hourglass3.visibility = View.INVISIBLE
+//                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
+//                    }
+//                    4 -> {
+//                        hourglass0.visibility = View.VISIBLE
+//                        hourglass1.visibility = View.VISIBLE
+//                        hourglass2.visibility = View.VISIBLE
+//                        hourglass3.visibility = View.INVISIBLE
+//                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
+//                        hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
+//                    }
+//                    6 -> {
+//                        hourglass0.visibility = View.VISIBLE
+//                        hourglass1.visibility = View.VISIBLE
+//                        hourglass2.visibility = View.VISIBLE
+//                        hourglass3.visibility = View.VISIBLE
+//                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
+//                        hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
+//                        hourglass2.setImageResource(R.drawable.ic_hourglass_full_24px)
+//                    }
+//
+//                }
+//            }
+//            1, 3, 5 -> {
+//                // short break
+//                when (PrefUtil.getCurrentCycle(this)) {
+//                    1 -> {
+//                        hourglass0.visibility = View.VISIBLE
+//                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
+//                        hourglass1.setImageResource(R.drawable.ic_hourglass_empty_24px)
+//                        hourglass2.setImageResource(R.drawable.ic_hourglass_empty_24px)
+//                        hourglass3.setImageResource(R.drawable.ic_hourglass_empty_24px)
+//
+//                    }
+//                    3 -> {
+//                        hourglass0.visibility = View.VISIBLE
+//                        hourglass1.visibility = View.VISIBLE
+//                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
+//                        hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
+//                        hourglass2.setImageResource(R.drawable.ic_hourglass_empty_24px)
+//                        hourglass3.setImageResource(R.drawable.ic_hourglass_empty_24px)
+//
+//                    }
+//                    5 -> {
+//                        hourglass0.visibility = View.VISIBLE
+//                        hourglass1.visibility = View.VISIBLE
+//                        hourglass2.visibility = View.VISIBLE
+//                        hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
+//                        hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
+//                        hourglass2.setImageResource(R.drawable.ic_hourglass_full_24px)
+//                        hourglass3.setImageResource(R.drawable.ic_hourglass_empty_24px)
+//                    }
+//
+//                }
+//            }
+//            7 -> {
+//                // long break
+//                hourglass0.visibility = View.VISIBLE
+//                hourglass1.visibility = View.VISIBLE
+//                hourglass2.visibility = View.VISIBLE
+//                hourglass3.visibility = View.VISIBLE
+//                hourglass0.setImageResource(R.drawable.ic_hourglass_full_24px)
+//                hourglass1.setImageResource(R.drawable.ic_hourglass_full_24px)
+//                hourglass2.setImageResource(R.drawable.ic_hourglass_full_24px)
+//                hourglass3.setImageResource(R.drawable.ic_hourglass_full_24px)
+//            }
+//            else -> {
+//                // error
+//
+//            }
+//        }
     }
 
     private fun updateCountDownUI() {
@@ -548,24 +547,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateButtons() {
-        when (timerState) {
-            TimerState.Running -> {
-                startStop.setImageResource(android.R.drawable.ic_media_pause)
-                if (PrefUtil.getAutoStart(this)) {
-                    restart.setImageResource(R.drawable.ic_break_on_pause)
-                } else {
-                    restart.setImageResource(R.drawable.ic_continue)
-                }
-            }
-            TimerState.Paused -> {
-                startStop.setImageResource(android.R.drawable.ic_media_play)
-                restart.setImageResource(R.drawable.ic_reset)
-            }
-            TimerState.Stopped -> {
-                startStop.setImageResource(android.R.drawable.ic_media_play)
-                restart.setImageResource(R.drawable.ic_reset)
-            }
-        }
+//        when (timerState) {
+//            TimerState.Running -> {
+//                startStop.setImageResource(android.R.drawable.ic_media_pause)
+//                if (PrefUtil.getAutoStart(this)) {
+//                    restart.setImageResource(R.drawable.ic_break_on_pause)
+//                } else {
+//                    restart.setImageResource(R.drawable.ic_continue)
+//                }
+//            }
+//            TimerState.Paused -> {
+//                startStop.setImageResource(android.R.drawable.ic_media_play)
+//                restart.setImageResource(R.drawable.ic_reset)
+//            }
+//            TimerState.Stopped -> {
+//                startStop.setImageResource(android.R.drawable.ic_media_play)
+//                restart.setImageResource(R.drawable.ic_reset)
+//            }
+//        }
     }
 
     private fun updatePomodoroCounter() {

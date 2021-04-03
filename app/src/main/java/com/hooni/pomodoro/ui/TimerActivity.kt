@@ -21,6 +21,8 @@ class TimerActivity:ComponentActivity() {
                     timerViewModel.progress,
                     timerViewModel::pausePlay,
                     timerViewModel::onAutostart,
+                    timerViewModel.isRunning,
+                    timerViewModel.isAutostart,
                     {/*TODO: openSettings */}
                 )
             }

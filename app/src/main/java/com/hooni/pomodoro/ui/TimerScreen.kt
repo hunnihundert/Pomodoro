@@ -24,6 +24,8 @@ fun TimerScreen(
     progress: Float,
     onPausePlay: (Boolean) -> Unit,
     onAutostart: (Boolean) -> Unit,
+    isRunning: Boolean,
+    isAutostart: Boolean,
     openSettings: () -> Unit
 ) {
     MaterialTheme {
@@ -34,6 +36,8 @@ fun TimerScreen(
             progress = progress,
             onPausePlay = onPausePlay,
             onAutostart = onAutostart,
+            isRunning = isRunning,
+            isAutostart = isAutostart,
             openSettings = openSettings,
             modifier = Modifier.fillMaxWidth()
         )
@@ -48,6 +52,8 @@ fun TimerScreenWhole(
     progress: Float,
     onPausePlay: (Boolean) -> Unit,
     onAutostart: (Boolean) -> Unit,
+    isRunning: Boolean,
+    isAutostart: Boolean,
     openSettings: () -> Unit,
     modifier: Modifier
 ) {
@@ -72,6 +78,8 @@ fun TimerScreenWhole(
         FloatingActionButtons(
             onPausePlay = onPausePlay,
             onAutostart = onAutostart,
+            isRunning = isRunning,
+            isAutostart = isAutostart,
             modifier = Modifier
                 .padding(top = 48.dp)
                 .align(Alignment.CenterHorizontally)
@@ -161,25 +169,22 @@ fun Pomodoros(currentPomodoro: Int) {
 fun FloatingActionButtons(
     onPausePlay: (Boolean) -> Unit,
     onAutostart: (Boolean) -> Unit,
+    isRunning: Boolean,
+    isAutostart: Boolean,
     modifier: Modifier
 ) {
-
-    val (isRunning, setRunning) = remember { mutableStateOf(true) }
-    val pausePlay: () -> Unit = {
-        setRunning(!isRunning)
-        onPausePlay(isRunning)
-    }
 
     Row(modifier = modifier) {
         RestartFloatingActionButton(
             isRunning = isRunning,
+            isAutostart = isAutostart,
             onAutostart = onAutostart,
             modifier = Modifier.padding(32.dp)
         )
 
         PausePlayFloatingActionButton(
-            onPausePlay = pausePlay,
             isRunning = isRunning,
+            onPausePlay = onPausePlay,
             modifier = Modifier.padding(32.dp)
         )
 
@@ -188,12 +193,16 @@ fun FloatingActionButtons(
 
 @Composable
 fun PausePlayFloatingActionButton(
-    onPausePlay: () -> Unit,
     isRunning: Boolean,
+    onPausePlay: (Boolean) -> Unit,
     modifier: Modifier
 ) {
+    val pausePlay: () -> Unit = {
+        onPausePlay(isRunning)
+    }
+
     FloatingActionButton(
-        onClick = onPausePlay,
+        onClick = pausePlay,
         modifier = modifier
             .padding(16.dp)
     ) {
@@ -208,15 +217,12 @@ fun PausePlayFloatingActionButton(
 @Composable
 fun RestartFloatingActionButton(
     isRunning: Boolean,
+    isAutostart: Boolean,
     onAutostart: (Boolean) -> Unit,
     modifier: Modifier
 ) {
-
-    val (isAutoStart, setAutostart) = remember { mutableStateOf(true) }
-
     val autostart: () -> Unit = {
-        setAutostart(!isAutoStart)
-        onAutostart(isAutoStart)
+        onAutostart(isAutostart)
     }
 
     FloatingActionButton(
@@ -227,7 +233,7 @@ fun RestartFloatingActionButton(
         Icon(
             if (!isRunning) painterResource(id = R.drawable.ic_reset)
             else {
-                if (isAutoStart) painterResource(id = R.drawable.ic_break_on_pause)
+                if (isAutostart) painterResource(id = R.drawable.ic_break_on_pause)
                 else painterResource(id = R.drawable.ic_continue)
             },
             contentDescription = if (isRunning) "Pause" else "Play"
@@ -246,6 +252,8 @@ fun TimerScreenWholePreview() {
             progress = 0.7f,
             onPausePlay = {},
             onAutostart = {},
+            isRunning = true,
+            isAutostart = false,
             openSettings = {},
             modifier = Modifier.padding(4.dp)
         )
