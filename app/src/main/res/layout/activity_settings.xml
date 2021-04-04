@@ -6,20 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".SettingsActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolBarSettings"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:title="Pomodoro"
-        app:menu="@menu/menu" />
-
     <fragment
         android:id="@+id/fragment"
         android:name="com.hooni.pomodoro.SettingsActivityFragment"
@@ -28,5 +14,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolBarSettings" />
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

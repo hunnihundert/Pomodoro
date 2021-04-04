@@ -7,3 +7,6 @@ val Red800 = Color(0xffd00036)
 val Red900 = Color(0xffc20029)
 val Red200 = Color(0xfff297a2)
 val Red300 = Color(0xffea6d7e)
+
+val PomodoroRed = Color(0xffFF6347)
+val PomodoroAccent = Color(0xffFFA494)

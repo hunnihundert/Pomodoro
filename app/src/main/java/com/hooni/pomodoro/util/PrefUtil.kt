@@ -1,8 +1,8 @@
 package com.hooni.pomodoro.util
 
 import android.content.Context
-import android.preference.PreferenceManager
-import com.hooni.pomodoro.MainActivity
+import androidx.preference.PreferenceManager
+import com.hooni.pomodoro.util.Util.TimerState
 
 class PrefUtil {
 
@@ -20,7 +20,7 @@ class PrefUtil {
             return preferences.getBoolean(SCREEN_TIMEOUT, false)
         }
 
-        fun getTimerLength(context: Context): Int {
+        fun getTimerLengthInMinutes(context: Context): Int {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
             return preferences.getInt(TIMER_LENGTH_ID, 25)
         }
@@ -77,13 +77,13 @@ class PrefUtil {
 
         private const val TIMER_STATE_ID = "com.hooni.pomodoro.timer_state"
 
-        fun getTimerState(context: Context): MainActivity.TimerState {
+        fun getTimerState(context: Context): TimerState {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
             val ordinal = preferences.getInt(TIMER_STATE_ID, 0)
-            return MainActivity.TimerState.values()[ordinal]
+            return TimerState.values()[ordinal]
         }
 
-        fun setTimerState(timerState: MainActivity.TimerState, context: Context) {
+        fun setTimerState(timerState: TimerState, context: Context) {
             val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
             val ordinal = timerState.ordinal
             editor.putInt(TIMER_STATE_ID, ordinal)
@@ -92,12 +92,12 @@ class PrefUtil {
 
         private const val SECONDS_REMAINING = "com.hooni.pomodoro.seconds_remaining"
 
-        fun getSecondsRemaining(context: Context): Long {
+        fun getMillisecondsRemaining(context: Context): Long {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
             return preferences.getLong(SECONDS_REMAINING, 0)
         }
 
-        fun setSecondsRemaining(seconds: Long, context: Context) {
+        fun setMillisecondsRemaining(seconds: Long, context: Context) {
             val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
             editor.putLong(SECONDS_REMAINING, seconds)
             editor.apply()
@@ -118,7 +118,7 @@ class PrefUtil {
 
         private const val CURRENT_CYCLE = "com.hooni.pomodoro.current_cycle"
 
-        fun setCurrentCycle(context: Context, currentCycle: Int) {
+        fun setCurrentCycle(currentCycle: Int, context: Context) {
             val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
             editor.putInt(CURRENT_CYCLE, currentCycle)
             editor.apply()
