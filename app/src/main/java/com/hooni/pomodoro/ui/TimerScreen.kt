@@ -23,6 +23,7 @@ fun TimerScreen(
     progress: Float,
     onPausePlay: (TimerState) -> Unit,
     onAutostart: (Boolean) -> Unit,
+    onResetTimer: () -> Unit,
     isRunning: TimerState,
     isAutostart: Boolean,
     openSettings: () -> Unit
@@ -35,6 +36,7 @@ fun TimerScreen(
             progress = progress,
             onPausePlay = onPausePlay,
             onAutostart = onAutostart,
+            onResetTimer = onResetTimer,
             isRunning = isRunning,
             isAutostart = isAutostart,
             openSettings = openSettings,
@@ -51,6 +53,7 @@ fun TimerScreenWhole(
     progress: Float,
     onPausePlay: (TimerState) -> Unit,
     onAutostart: (Boolean) -> Unit,
+    onResetTimer: () -> Unit,
     isRunning: TimerState,
     isAutostart: Boolean,
     openSettings: () -> Unit,
@@ -78,6 +81,7 @@ fun TimerScreenWhole(
         FloatingActionButtons(
             onPausePlay = onPausePlay,
             onAutostart = onAutostart,
+            onResetTimer = onResetTimer,
             isRunning = isRunning,
             isAutostart = isAutostart,
             modifier = Modifier
@@ -159,7 +163,7 @@ fun Pomodoros(currentPomodoro: Int, isRunning: TimerState) {
                     .height(dimensionResource(id = R.dimen.height_timer_pomodoroIndicator))
             )
         }
-        if(isRunning == TimerState.Running) {
+        if (isRunning == TimerState.Running) {
             CircularProgressIndicator(
                 modifier = Modifier
                     .width(18.dp)
@@ -175,6 +179,7 @@ fun Pomodoros(currentPomodoro: Int, isRunning: TimerState) {
 fun FloatingActionButtons(
     onPausePlay: (TimerState) -> Unit,
     onAutostart: (Boolean) -> Unit,
+    onResetTimer: () -> Unit,
     isRunning: TimerState,
     isAutostart: Boolean,
     modifier: Modifier
@@ -185,6 +190,7 @@ fun FloatingActionButtons(
             isRunning = isRunning,
             isAutostart = isAutostart,
             onAutostart = onAutostart,
+            onResetTimer = onResetTimer,
             modifier = Modifier.padding(32.dp)
         )
 
@@ -225,14 +231,18 @@ fun RestartFloatingActionButton(
     isRunning: TimerState,
     isAutostart: Boolean,
     onAutostart: (Boolean) -> Unit,
+    onResetTimer: () -> Unit,
     modifier: Modifier
 ) {
-    val autostart: () -> Unit = {
+    val switchAutostart: () -> Unit = {
         onAutostart(isAutostart)
     }
 
+    val resetTimer: () -> Unit = { onResetTimer() }
+
+
     FloatingActionButton(
-        onClick = autostart,
+        onClick = if (isRunning == TimerState.Running) switchAutostart else resetTimer,
         modifier = modifier
             .padding(16.dp)
     ) {
@@ -258,6 +268,7 @@ fun TimerScreenWholePreview() {
             progress = 0.7f,
             onPausePlay = {},
             onAutostart = {},
+            onResetTimer = {},
             isRunning = TimerState.Running,
             isAutostart = false,
             openSettings = {},

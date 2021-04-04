@@ -32,6 +32,7 @@ class TimerViewModel: ViewModel() {
         private set
     var timeLeftMilliseconds by mutableStateOf(TIMER_INITIAL_VALUE_IN_MILLISECONDS)
         private set
+    private var pomodoroLengthMilliseconds = TIMER_INITIAL_VALUE_IN_MILLISECONDS
     private var shortBreakLengthMilliseconds = SHORT_BREAK_INITIAL_VALUE_IN_MILLISECONDS
     private var longBreakLengthMilliseconds = LONG_BREAK_INITIAL_VALUE_IN_MILLISECONDS
 
@@ -51,9 +52,6 @@ class TimerViewModel: ViewModel() {
 
     fun onAutostart(_isAutostart: Boolean) {
         isAutostart =_isAutostart
-        if(timerState != TimerState.Running) {
-            resetTimer()
-        }
     }
 
     private fun pauseTimer() {
@@ -80,9 +78,7 @@ class TimerViewModel: ViewModel() {
         timerState = PrefUtil.getTimerState(context)
         currentPomodoro = PrefUtil.getCurrentCycle(context)
         initTimerLengthValues(context)
-        setTotalTimeMilliseconds(context)
-        setTimeLeftMilliseconds(context)
-        setAlarm(context)
+        initTimerValues(context)
     }
 
     private fun setTotalTimeMilliseconds(context: Context) {
@@ -105,13 +101,13 @@ class TimerViewModel: ViewModel() {
                 longBreakLengthMilliseconds
             }
              else -> {
-                 timerLengthMilliseconds
+                 pomodoroLengthMilliseconds
              }
         }
     }
 
     private fun initTimerLengthValues(context: Context) {
-        timerLengthMilliseconds = PrefUtil.getTimerLengthInMinutes(context) * 60L * 1000L
+        pomodoroLengthMilliseconds = PrefUtil.getTimerLengthInMinutes(context) * 60L * 1000L
         shortBreakLengthMilliseconds = PrefUtil.getShortBreakLength(context) * 60L * 1000L
         longBreakLengthMilliseconds = PrefUtil.getLongBreakLength(context) * 60L * 1000L
     }
@@ -191,10 +187,18 @@ class TimerViewModel: ViewModel() {
         progress = timeLeftMilliseconds.toFloat() / timerLengthMilliseconds.toFloat()
     }
 
-    private fun resetTimer() {
+    fun onResetTimer(context: Context) {
         timeLeftMilliseconds = timerLengthMilliseconds
-        updateSecondsAndMinutes()
-        setProgress()
+        currentPomodoro = 0
+        timerState = TimerState.Stopped
+        progress = 1f
+        initTimerValues(context)
+    }
+
+    private fun initTimerValues(context: Context) {
+        setTotalTimeMilliseconds(context)
+        setTimeLeftMilliseconds(context)
+        setAlarm(context)
     }
 
     companion object {

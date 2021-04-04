@@ -29,6 +29,7 @@ class TimerActivity:ComponentActivity() {
                     timerViewModel.progress,
                     timerViewModel::pausePlay,
                     timerViewModel::onAutostart,
+                    { timerViewModel.onResetTimer(this) },
                     timerViewModel.timerState,
                     timerViewModel.isAutostart,
                     { openPreferences() }
