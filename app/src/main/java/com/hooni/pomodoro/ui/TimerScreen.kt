@@ -4,9 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -15,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hooni.pomodoro.R
+import com.hooni.pomodoro.util.Util.TimerState
 
 @Composable
 fun TimerScreen(
@@ -22,9 +21,9 @@ fun TimerScreen(
     secondsRemaining: String,
     currentPomodoro: Int,
     progress: Float,
-    onPausePlay: (Boolean) -> Unit,
+    onPausePlay: (TimerState) -> Unit,
     onAutostart: (Boolean) -> Unit,
-    isRunning: Boolean,
+    isRunning: TimerState,
     isAutostart: Boolean,
     openSettings: () -> Unit
 ) {
@@ -50,9 +49,9 @@ fun TimerScreenWhole(
     secondsRemaining: String,
     currentPomodoro: Int,
     progress: Float,
-    onPausePlay: (Boolean) -> Unit,
+    onPausePlay: (TimerState) -> Unit,
     onAutostart: (Boolean) -> Unit,
-    isRunning: Boolean,
+    isRunning: TimerState,
     isAutostart: Boolean,
     openSettings: () -> Unit,
     modifier: Modifier
@@ -73,6 +72,7 @@ fun TimerScreenWhole(
             secondsRemaining = secondsRemaining,
             currentPomodoro = currentPomodoro,
             progress = progress,
+            isRunning = isRunning,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         FloatingActionButtons(
@@ -92,6 +92,7 @@ fun TimeAndPomodorosAndProgress(
     minutesRemaining: String,
     secondsRemaining: String,
     currentPomodoro: Int,
+    isRunning: TimerState,
     progress: Float,
     modifier: Modifier
 ) {
@@ -111,6 +112,7 @@ fun TimeAndPomodorosAndProgress(
             minutesRemaining = minutesRemaining,
             secondsRemaining = secondsRemaining,
             currentPomodoro = currentPomodoro,
+            isRunning = isRunning,
             Modifier
                 .padding(dimensionResource(id = R.dimen.fontSize_timer_time))
                 .align(Alignment.Center)
@@ -123,11 +125,12 @@ fun TimeAndPomodoros(
     minutesRemaining: String,
     secondsRemaining: String,
     currentPomodoro: Int,
+    isRunning: TimerState,
     modifier: Modifier
 ) {
     Column(modifier = modifier) {
         Time(minutesRemaining, secondsRemaining)
-        Pomodoros(currentPomodoro)
+        Pomodoros(currentPomodoro, isRunning)
     }
 
 }
@@ -142,7 +145,8 @@ fun Time(minutesRemaining: String, secondsRemaining: String) {
 }
 
 @Composable
-fun Pomodoros(currentPomodoro: Int) {
+fun Pomodoros(currentPomodoro: Int, isRunning: TimerState) {
+
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -155,21 +159,23 @@ fun Pomodoros(currentPomodoro: Int) {
                     .height(dimensionResource(id = R.dimen.height_timer_pomodoroIndicator))
             )
         }
-        CircularProgressIndicator(
-            modifier = Modifier
-                .width(18.dp)
-                .height(18.dp)
-                .padding(4.dp),
-            strokeWidth = 2.dp
-        )
+        if(isRunning == TimerState.Running) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .width(18.dp)
+                    .height(18.dp)
+                    .padding(4.dp),
+                strokeWidth = 2.dp
+            )
+        }
     }
 }
 
 @Composable
 fun FloatingActionButtons(
-    onPausePlay: (Boolean) -> Unit,
+    onPausePlay: (TimerState) -> Unit,
     onAutostart: (Boolean) -> Unit,
-    isRunning: Boolean,
+    isRunning: TimerState,
     isAutostart: Boolean,
     modifier: Modifier
 ) {
@@ -193,8 +199,8 @@ fun FloatingActionButtons(
 
 @Composable
 fun PausePlayFloatingActionButton(
-    isRunning: Boolean,
-    onPausePlay: (Boolean) -> Unit,
+    isRunning: TimerState,
+    onPausePlay: (TimerState) -> Unit,
     modifier: Modifier
 ) {
     val pausePlay: () -> Unit = {
@@ -207,16 +213,16 @@ fun PausePlayFloatingActionButton(
             .padding(16.dp)
     ) {
         Icon(
-            if (isRunning) painterResource(id = R.drawable.ic_pause)
+            if (isRunning == TimerState.Running) painterResource(id = R.drawable.ic_pause)
             else painterResource(id = R.drawable.ic_play),
-            contentDescription = if (isRunning) "Pause" else "Play"
+            contentDescription = if (isRunning == TimerState.Running) "Pause" else "Play"
         )
     }
 }
 
 @Composable
 fun RestartFloatingActionButton(
-    isRunning: Boolean,
+    isRunning: TimerState,
     isAutostart: Boolean,
     onAutostart: (Boolean) -> Unit,
     modifier: Modifier
@@ -231,12 +237,12 @@ fun RestartFloatingActionButton(
             .padding(16.dp)
     ) {
         Icon(
-            if (!isRunning) painterResource(id = R.drawable.ic_reset)
+            if (isRunning != TimerState.Running) painterResource(id = R.drawable.ic_reset)
             else {
                 if (isAutostart) painterResource(id = R.drawable.ic_break_on_pause)
                 else painterResource(id = R.drawable.ic_continue)
             },
-            contentDescription = if (isRunning) "Pause" else "Play"
+            contentDescription = if (isRunning == TimerState.Running) "Pause" else "Play"
         )
     }
 }
@@ -252,7 +258,7 @@ fun TimerScreenWholePreview() {
             progress = 0.7f,
             onPausePlay = {},
             onAutostart = {},
-            isRunning = true,
+            isRunning = TimerState.Running,
             isAutostart = false,
             openSettings = {},
             modifier = Modifier.padding(4.dp)

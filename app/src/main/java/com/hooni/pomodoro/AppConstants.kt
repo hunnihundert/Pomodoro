@@ -18,5 +18,9 @@ class AppConstants {
 
         const val LIGHT_MODE = "light"
         const val DARK_MODE = "dark"
+
+        const val TIMER_INITIAL_VALUE_IN_MILLISECONDS = 1_500_000L
+        const val SHORT_BREAK_INITIAL_VALUE_IN_MILLISECONDS = 300_000L
+        const val LONG_BREAK_INITIAL_VALUE_IN_MILLISECONDS = 1_200_000L
     }
 }

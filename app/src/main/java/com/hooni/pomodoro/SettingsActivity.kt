@@ -12,12 +12,8 @@ class SettingsActivity : AppCompatActivity() {
             AppConstants.LIGHT_MODE -> setTheme(R.style.lightTheme)
             AppConstants.DARK_MODE -> setTheme(R.style.darkTheme)
         }
-        window.decorView.apply {
-
-        }
 
         setContentView(R.layout.activity_settings)
-        //setSupportActionBar(toolBarSettings)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Settings"
     }

@@ -1,10 +1,17 @@
 package com.hooni.pomodoro.ui
 
+import android.content.Context
 import android.os.CountDownTimer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.hooni.pomodoro.AppConstants.Companion.LONG_BREAK_INITIAL_VALUE_IN_MILLISECONDS
+import com.hooni.pomodoro.AppConstants.Companion.SHORT_BREAK_INITIAL_VALUE_IN_MILLISECONDS
+import com.hooni.pomodoro.AppConstants.Companion.TIMER_INITIAL_VALUE_IN_MILLISECONDS
+import com.hooni.pomodoro.util.PrefUtil
+import com.hooni.pomodoro.util.Util.TimerState
+import java.util.*
 
 class TimerViewModel: ViewModel() {
 
@@ -21,17 +28,21 @@ class TimerViewModel: ViewModel() {
         private set
 
 
-    private var totalTimeInMilliSeconds = 10000L
-    private var currentTimeInMilliSeconds = 10000L
+    var timerLengthMilliseconds by mutableStateOf(TIMER_INITIAL_VALUE_IN_MILLISECONDS)
+        private set
+    var timeLeftMilliseconds by mutableStateOf(TIMER_INITIAL_VALUE_IN_MILLISECONDS)
+        private set
+    private var shortBreakLengthMilliseconds = SHORT_BREAK_INITIAL_VALUE_IN_MILLISECONDS
+    private var longBreakLengthMilliseconds = LONG_BREAK_INITIAL_VALUE_IN_MILLISECONDS
 
     private lateinit var timer: CountDownTimer
 
-    var isRunning by mutableStateOf(false)
+    var timerState by mutableStateOf(TimerState.Stopped)
     var isAutostart by mutableStateOf(true)
 
-    fun pausePlay(_isRunning: Boolean) {
-        isRunning = _isRunning
-        if(isRunning) {
+    fun pausePlay(_isRunning: TimerState) {
+        timerState = _isRunning
+        if(timerState == TimerState.Running) {
             pauseTimer()
         } else {
             startTimer()
@@ -40,21 +51,21 @@ class TimerViewModel: ViewModel() {
 
     fun onAutostart(_isAutostart: Boolean) {
         isAutostart =_isAutostart
-        if(!isRunning) {
+        if(timerState != TimerState.Running) {
             resetTimer()
         }
     }
 
     private fun pauseTimer() {
-        isRunning = false
+        timerState = TimerState.Paused
         timer.cancel()
     }
 
     private fun startTimer() {
-        isRunning = true
-        timer = object : CountDownTimer(currentTimeInMilliSeconds,1000) {
+        timerState = TimerState.Running
+        timer = object : CountDownTimer(timeLeftMilliseconds,1000) {
             override fun onTick(millisUntilFinished: Long) {
-                currentTimeInMilliSeconds = millisUntilFinished
+                timeLeftMilliseconds = millisUntilFinished
                 updateSecondsAndMinutes()
                 setProgress()
             }
@@ -65,8 +76,76 @@ class TimerViewModel: ViewModel() {
         }.start()
     }
 
+    fun initTimer(context: Context) {
+        timerState = PrefUtil.getTimerState(context)
+        currentPomodoro = PrefUtil.getCurrentCycle(context)
+        initTimerLengthValues(context)
+        setTotalTimeMilliseconds(context)
+        setTimeLeftMilliseconds(context)
+        setAlarm(context)
+    }
+
+    private fun setTotalTimeMilliseconds(context: Context) {
+        when(timerState) {
+            TimerState.Stopped -> {
+                setNewTimerLength()
+            }
+            else -> {
+                setPreviousTimerLength(context)
+            }
+        }
+    }
+
+    private fun setNewTimerLength() {
+        timerLengthMilliseconds = when(currentPomodoro) {
+            1, 3, 5 -> {
+                shortBreakLengthMilliseconds
+            }
+            7 -> {
+                longBreakLengthMilliseconds
+            }
+             else -> {
+                 timerLengthMilliseconds
+             }
+        }
+    }
+
+    private fun initTimerLengthValues(context: Context) {
+        timerLengthMilliseconds = PrefUtil.getTimerLengthInMinutes(context) * 60L * 1000L
+        shortBreakLengthMilliseconds = PrefUtil.getShortBreakLength(context) * 60L * 1000L
+        longBreakLengthMilliseconds = PrefUtil.getLongBreakLength(context) * 60L * 1000L
+    }
+
+    private fun setPreviousTimerLength(context: Context) {
+        timerLengthMilliseconds = PrefUtil.getPreviousTimerLengthSeconds(context)
+    }
+
+    private fun setTimeLeftMilliseconds(context: Context) {
+        timeLeftMilliseconds = if(timerState != TimerState.Stopped) {
+            PrefUtil.getMillisecondsRemaining(context)
+        } else {
+            timerLengthMilliseconds
+        }
+        updateSecondsAndMinutes()
+    }
+
+    private fun setAlarm(context: Context) {
+        val alarmSetTime = PrefUtil.getAlarmSetTime(context)
+        val currentTimeMilliSeconds = Calendar.getInstance().timeInMillis
+
+        if (alarmSetTime > 0) {
+            timeLeftMilliseconds -= currentTimeMilliSeconds - alarmSetTime
+
+            if(timeLeftMilliseconds <= 0) {
+                onTimerFinished()
+            } else if(timerState == TimerState.Running) {
+                startTimer()
+            }
+        }
+    }
+
     private fun updateSecondsAndMinutes() {
-        val currentTimeLeftInSeconds = currentTimeInMilliSeconds / 1000
+        val currentTimeLeftInSeconds = timeLeftMilliseconds / 1000
         val currentSecondsLeft = currentTimeLeftInSeconds % 60
         val currentMinutesLeft = (currentTimeLeftInSeconds - currentSecondsLeft) / 60
 
@@ -81,20 +160,39 @@ class TimerViewModel: ViewModel() {
     }
 
     private fun onTimerFinished() {
-        currentTimeInMilliSeconds = 0
+        if(timerState != TimerState.Stopped) {
+            updatePomodoroCycle()
+            // play noti/vibration
+        }
+        timeLeftMilliseconds = 0
         progress = 0f
         updateSecondsAndMinutes()
         setProgress()
-        isRunning = false
+
+        setNewTimerLength()
+
+        if(isAutostart && timerState == TimerState.Running) {
+            timeLeftMilliseconds = timerLengthMilliseconds
+            startTimer()
+        } else {
+            timerState = TimerState.Paused
+        }
+    }
+
+    private fun updatePomodoroCycle() {
+        if(currentPomodoro < 7) {
+            currentPomodoro += 1
+        } else {
+            currentPomodoro = 0
+        }
     }
 
     private fun setProgress() {
-        progress = currentTimeInMilliSeconds.toFloat() / totalTimeInMilliSeconds.toFloat()
+        progress = timeLeftMilliseconds.toFloat() / timerLengthMilliseconds.toFloat()
     }
 
     private fun resetTimer() {
-        totalTimeInMilliSeconds = 10000L
-        currentTimeInMilliSeconds = 10000L
+        timeLeftMilliseconds = timerLengthMilliseconds
         updateSecondsAndMinutes()
         setProgress()
     }

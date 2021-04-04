@@ -19,8 +19,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.BuildCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.hooni.pomodoro.util.NotificationUtil
 import com.hooni.pomodoro.util.PrefUtil
+import com.hooni.pomodoro.util.Util.TimerState
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar
 import java.util.*
 
@@ -28,8 +28,6 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     companion object {
-
-
         fun setAlarm(context: Context, nowSeconds: Long, secondsRemaining: Long): Long {
             val wakeUpTime = (nowSeconds + secondsRemaining) * 1000
             val alarmManager = context.getSystemService((Context.ALARM_SERVICE)) as AlarmManager
@@ -95,9 +93,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    enum class TimerState {
-        Stopped, Paused, Running
-    }
 
     // the actual timer which is running
     private lateinit var timer: CountDownTimer
@@ -128,7 +123,7 @@ class MainActivity : AppCompatActivity() {
         }
         //binding = ActivityMainOldBinding.inflate(layoutInflater)
         //setContentView(binding.root)
-        setTimer(PrefUtil.getSecondsRemaining(this) * 1000)
+        setTimer(PrefUtil.getMillisecondsRemaining(this) * 1000)
         initUI()
 
 
@@ -149,7 +144,7 @@ class MainActivity : AppCompatActivity() {
         initTimer()
         updateStatusIcons()
         removeAlarm(this)
-        NotificationUtil.hideTimerNotification(this)
+        //NotificationUtil.hideTimerNotification(this)
         dimScreen()
         hideNaviAndStatusBar()
     }
@@ -194,13 +189,13 @@ class MainActivity : AppCompatActivity() {
         if (timerState == TimerState.Running) {
             timer.cancel()
             val wakeUpTime = setAlarm(this, nowSeconds, secondsRemaining)
-            NotificationUtil.showTimerRunning(this, wakeUpTime, secondsRemaining)
+            //NotificationUtil.showTimerRunning(this, wakeUpTime, secondsRemaining)
         } else if (timerState == TimerState.Paused) {
-            NotificationUtil.showTimerPaused(this)
+            //NotificationUtil.showTimerPaused(this)
         }
 
         PrefUtil.setPreviousTimerLengthSeconds(timerLengthSeconds, this)
-        PrefUtil.setSecondsRemaining(secondsRemaining, this)
+        PrefUtil.setMillisecondsRemaining(secondsRemaining, this)
         PrefUtil.setTimerState(timerState, this)
     }
 
@@ -267,7 +262,7 @@ class MainActivity : AppCompatActivity() {
                 resetStatusIcons()
                 // TODO: currently a workaround, the timer should be completely initialized and not
                 // onTimerFinished called
-                PrefUtil.setCurrentCycle(this, 0)
+                PrefUtil.setCurrentCycle(0, this)
                 onTimerFinished()
             }
             updateButtons()
@@ -332,7 +327,7 @@ class MainActivity : AppCompatActivity() {
         }
         secondsRemaining =
             if (timerState != TimerState.Stopped)
-                PrefUtil.getSecondsRemaining(this)
+                PrefUtil.getMillisecondsRemaining(this)
             else
                 timerLengthSeconds
 
@@ -387,7 +382,7 @@ class MainActivity : AppCompatActivity() {
             when (PrefUtil.getCurrentCycle(this)) {
                 0, 2, 4, 6 -> {
                     // study cycle
-                    PrefUtil.getTimerLength(this)
+                    PrefUtil.getTimerLengthInMinutes(this)
                 }
                 1, 3, 5 -> {
                     // short break
@@ -399,7 +394,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 else -> {
                     // error
-                    PrefUtil.getTimerLength(this)
+                    PrefUtil.getTimerLengthInMinutes(this)
                 }
             }
         timerLengthSeconds = (lengthInMinutes * 60L)
@@ -425,7 +420,7 @@ class MainActivity : AppCompatActivity() {
         }
         setNewTimerLength()
         progressCountdown.progress = 0
-        PrefUtil.setSecondsRemaining(timerLengthSeconds, this)
+        PrefUtil.setMillisecondsRemaining(timerLengthSeconds, this)
         secondsRemaining = timerLengthSeconds
 
 
@@ -568,7 +563,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updatePomodoroCounter() {
-        PrefUtil.setCurrentCycle(this, (PrefUtil.getCurrentCycle(this) + 1))
+        PrefUtil.setCurrentCycle((PrefUtil.getCurrentCycle(this) + 1), this)
     }
 
 
