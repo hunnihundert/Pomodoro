@@ -154,7 +154,7 @@ fun Pomodoros(currentPomodoro: Int, isRunning: TimerState) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        for (i in 1 until currentPomodoro) {
+        for (i in 0 until currentPomodoro/2) {
             Icon(
                 imageVector = Icons.Filled.Check,
                 "Pomodoro Indicator",
@@ -164,13 +164,30 @@ fun Pomodoros(currentPomodoro: Int, isRunning: TimerState) {
             )
         }
         if (isRunning == TimerState.Running) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .width(18.dp)
-                    .height(18.dp)
-                    .padding(4.dp),
-                strokeWidth = 2.dp
-            )
+            when(currentPomodoro) {
+                0,2,4,6 -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .width(18.dp)
+                            .height(18.dp)
+                            .padding(4.dp),
+                        strokeWidth = 2.dp
+                    )
+                }
+                1,3,5 -> {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_short_break),
+                        contentDescription = "Short Break"
+                    )
+                }
+                else -> {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_long_break),
+                        contentDescription = "Long Break"
+                    )
+                }
+            }
+
         }
     }
 }
