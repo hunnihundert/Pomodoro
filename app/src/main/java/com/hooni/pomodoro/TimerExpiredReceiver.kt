@@ -6,6 +6,7 @@ import android.content.Intent
 import android.widget.Toast
 import com.hooni.pomodoro.ui.notification.NotificationUtil
 import com.hooni.pomodoro.util.PrefUtil
+import com.hooni.pomodoro.util.Util
 import com.hooni.pomodoro.util.Util.TimerState
 import java.util.*
 
@@ -39,12 +40,12 @@ class TimerExpiredReceiver : BroadcastReceiver() {
             PrefUtil.setMillisecondsRemaining(lengthInMinutes * 60L * 1000L, context)
             val secondsRemaining = PrefUtil.getMillisecondsRemaining(context)
             val currentTimeInMilliseconds = Calendar.getInstance().timeInMillis
-            val wakeUpTime = MainActivity.setAlarm(context, currentTimeInMilliseconds, secondsRemaining)
+            val wakeUpTime = Util.setAlarm(context, currentTimeInMilliseconds, secondsRemaining)
             notificationUtil.showTimerRunning(wakeUpTime, secondsRemaining)
-            MainActivity.playNotification(context)
-            MainActivity.vibratePhone(context)
+            Util.playNotification(context)
+            Util.vibratePhone(context)
             Toast.makeText(context,
-                MainActivity.returnCurrentCycle(PrefUtil.getCurrentCycle(context)),Toast.LENGTH_SHORT).show()
+                Util.returnCurrentCycle(PrefUtil.getCurrentCycle(context)),Toast.LENGTH_SHORT).show()
         } else {
             notificationUtil.showTimerExpired()
             PrefUtil.setTimerState(TimerState.Stopped, context)
