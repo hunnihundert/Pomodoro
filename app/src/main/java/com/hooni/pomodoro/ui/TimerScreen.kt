@@ -13,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hooni.pomodoro.R
+import com.hooni.pomodoro.ui.theme.PomodoroTheme
 import com.hooni.pomodoro.util.Util.TimerState
 
 @Composable
@@ -28,7 +29,7 @@ fun TimerScreen(
     isAutostart: Boolean,
     openSettings: () -> Unit
 ) {
-    MaterialTheme {
+    Surface(Modifier.fillMaxWidth().fillMaxHeight()) {
         TimerScreenWhole(
             minutesRemaining = minutesRemaining,
             secondsRemaining = secondsRemaining,
@@ -274,22 +275,47 @@ fun RestartFloatingActionButton(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun TimerScreenWholePreview() {
-    MaterialTheme {
-        TimerScreenWhole(
-            minutesRemaining = "24",
-            secondsRemaining = "53",
-            currentPomodoro = 3,
-            progress = 0.7f,
-            onPausePlay = {},
-            onAutostart = {},
-            onResetTimer = {},
-            isRunning = TimerState.Running,
-            isAutostart = false,
-            openSettings = {},
-            modifier = Modifier.padding(4.dp)
-        )
+    PomodoroTheme {
+        Surface {
+            TimerScreenWhole(
+                minutesRemaining = "24",
+                secondsRemaining = "53",
+                currentPomodoro = 3,
+                progress = 0.7f,
+                onPausePlay = {},
+                onAutostart = {},
+                onResetTimer = {},
+                isRunning = TimerState.Running,
+                isAutostart = false,
+                openSettings = {},
+                modifier = Modifier.padding(4.dp)
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TimerScreenWholeDarkPreview() {
+    PomodoroTheme(darkTheme = true) {
+        Surface {
+            TimerScreenWhole(
+                minutesRemaining = "24",
+                secondsRemaining = "53",
+                currentPomodoro = 3,
+                progress = 0.7f,
+                onPausePlay = {},
+                onAutostart = {},
+                onResetTimer = {},
+                isRunning = TimerState.Running,
+                isAutostart = false,
+                openSettings = {},
+                modifier = Modifier.padding(4.dp)
+            )
+        }
+
     }
 }

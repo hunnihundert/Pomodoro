@@ -18,13 +18,14 @@ fun PomodoroTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composab
 }
 
 private val LightColors = lightColors(
-    primary = Red700,
-    primaryVariant = Red900,
-    onPrimary = Color.White,
-    secondary = Red700,
+    primary = Color.White,
+    primaryVariant = PomodoroAccent,
+    onPrimary = Color.Black,
+    secondary = Color.White,
     secondaryVariant = Red900,
-    onSecondary = Color.White,
-    error = Red800
+    onSecondary = Color.Black,
+    error = Red800,
+    surface = PomodoroRed
 )
 
 private val DarkColors = darkColors(
@@ -33,5 +34,7 @@ private val DarkColors = darkColors(
     onPrimary = Color.Black,
     secondary = Red300,
     onSecondary = Color.Black,
-    error = Red200
+    background = Color.Black,
+    error = Red200,
+    surface = Color.Black
 )
